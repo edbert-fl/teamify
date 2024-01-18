@@ -4,15 +4,17 @@ import {
   StyleSheet,
   TextInput,
   ActivityIndicator,
-  Button,
   KeyboardAvoidingView,
   TouchableOpacity,
   Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
+import { polyfill } from "react-native/Libraries/Utilities/PolyfillFunctions";
+import axios from "axios";
 
-const SERVER_URL = "localhost:3000";
+// SERVER_URL below only works for android devices.
+const SERVER_URL = "http://10.0.2.2:3000";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -28,10 +30,10 @@ const LoginScreen = () => {
     const api_url = SERVER_URL + "/api/time";
 
     console.log(api_url);
-
+    
     try {
-      const response = await fetch(api_url);
-      const data = await response.json();
+      const response = await axios.get(api_url);
+      const data = await response.data;
       console.log(data);
     } catch (error) {
       console.error("Error signing in:", error);
