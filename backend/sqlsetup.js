@@ -22,6 +22,7 @@ const setupDatabase = async () => {
         CREATE TABLE IF NOT EXISTS organization (
             id SERIAL PRIMARY KEY,
             organization_name VARCHAR(50) UNIQUE,
+            organization_code VARCHAR(12) UNIQUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);

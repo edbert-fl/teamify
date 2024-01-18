@@ -12,31 +12,30 @@ import {
   import { theme } from "../utils/Styles";
   import { polyfill } from "react-native/Libraries/Utilities/PolyfillFunctions";
   import axios from "axios";
+  import { useNavigation } from "@react-navigation/native";
+  import { StackNavigationProp } from "@react-navigation/stack";
+  import { RootStackParamList } from "../utils/Types";
+  import { SERVER_URL } from "../../backend/serverconfig";
   
-  // SERVER_URL below only works for android devices.
-  const SERVER_URL = "http://10.0.2.2:3000";
-  
-  const LoginScreen = () => {
+  const OrgRegistrationScreen = () => {
+    const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
   
-    const handleSignUp = () => {
-      console.log("Navigate to sign up");
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  
+    const handleLogin = () => {
+      navigation.navigate("Login");
     };
   
-    const signIn = async () => {
+    const signUp = async () => {
       setLoading(true);
-      const api_url = SERVER_URL + "/api/time";
-  
-      console.log(api_url);
-      
       try {
-        const response = await axios.get(api_url);
-        const data = await response.data;
-        console.log(data);
-      } catch (error) {
-        console.error("Error signing in:", error);
+        console.log("HAVENT IMPLEMENTED")
+      } catch (error: any) {
+        console.log(error);
+        alert("Sign up failed: " + error.message);
       } finally {
         setLoading(false);
       }
@@ -44,45 +43,35 @@ import {
   
     return (
       <View style={styles.container}>
-        <Text style={styles.logo}>teamify</Text>
+        <Text style={styles.logo}>WcDonald's</Text>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.formContainer}
         >
           <TextInput
-            value={email}
+            value={displayName}
             style={styles.input}
-            placeholder="Email"
+            placeholder="Organisation Code"
             placeholderTextColor={theme.colors.primary}
             autoCapitalize="none"
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={(text) => setDisplayName(text)}
             enablesReturnKeyAutomatically
-          />
-          <TextInput
-            value={password}
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor={theme.colors.primary}
-            autoCapitalize="none"
-            secureTextEntry={true}
-            onChangeText={(text) => setPassword(text)}
-            enablesReturnKeyAutomatically={true}
           />
   
           {loading ? (
             <ActivityIndicator size="large" color={theme.colors.primary} />
           ) : (
             <View style={{ marginTop: 50 }}>
-              <TouchableOpacity style={styles.button} onPress={signIn}>
-                <Text style={styles.buttonText}>Login</Text>
-              </TouchableOpacity>
               <View style={{ flex: 1 }} />
+              <TouchableOpacity style={styles.button} onPress={signUp}>
+                <Text style={styles.buttonText}>Continue Registration</Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={styles.linkContainer}
-                onPress={handleSignUp}
+                onPress={handleLogin}
               >
-                <Text style={styles.text}>Don't have an account?</Text>
-                <Text style={styles.link}>Sign up instead</Text>
+                <Text style={styles.text}>Already Have an account?</Text>
+                <Text style={styles.link}>Login instead</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -160,5 +149,5 @@ import {
     },
   });
   
-  export default LoginScreen;
+  export default OrgRegistrationScreen;
   
