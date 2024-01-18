@@ -43,7 +43,7 @@ const RegistrationScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>WcDonald's</Text>
+      <Text style={styles.logo}>Teamify</Text>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.formContainer}

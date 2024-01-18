@@ -18,9 +18,7 @@ import {
   import { SERVER_URL } from "../../backend/serverconfig";
   
   const OrgRegistrationScreen = () => {
-    const [displayName, setDisplayName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [organisationCode, setOrganisationCode] = useState("");
     const [loading, setLoading] = useState(false);
   
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -32,7 +30,7 @@ import {
     const signUp = async () => {
       setLoading(true);
       try {
-        console.log("HAVENT IMPLEMENTED")
+        console.log("Checking if organisation exists")
       } catch (error: any) {
         console.log(error);
         alert("Sign up failed: " + error.message);
@@ -43,18 +41,18 @@ import {
   
     return (
       <View style={styles.container}>
-        <Text style={styles.logo}>WcDonald's</Text>
+        <Text style={styles.logo}>Teamify</Text>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.formContainer}
         >
           <TextInput
-            value={displayName}
+            value={organisationCode}
             style={styles.input}
             placeholder="Organisation Code"
             placeholderTextColor={theme.colors.primary}
             autoCapitalize="none"
-            onChangeText={(text) => setDisplayName(text)}
+            onChangeText={(text) => setOrganisationCode(text)}
             enablesReturnKeyAutomatically
           />
   

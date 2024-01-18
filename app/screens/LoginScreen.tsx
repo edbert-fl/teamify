@@ -49,7 +49,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>teamify</Text>
+      <Text style={styles.logo}>Teamify</Text>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.formContainer}

@@ -2,9 +2,9 @@ import { StyleSheet } from "react-native";
 
 export const theme = {
   colors: {
-    primary: "#9AEBA3",
-    accent: "#818FB4",
-    background: "#363062",
+    primary: "#03C988",
+    accent: "#E94560",
+    background: "#16213E",
     surface: "#F9F9F9",
     text: "#FFFFFF",
     placeholderText: "#F5E8C7",
