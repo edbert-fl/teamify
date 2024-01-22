@@ -79,18 +79,30 @@ Log into existing organization
 app.post("/organization/login", async function (req, res) {
   const { organizationCode } = req.body;
 
+  console.log("organizationCode", organizationCode);
+
   try {
-    client = await pool.connect();
+    const client = await pool.connect();
 
     const result = await client.query(
-      "SELECT * FROM organization WHERE code = $1",
+      "SELECT * FROM organization WHERE organization_code = $1 LIMIT 1",
       [organizationCode]
     );
 
-    res.json({
-      organization: result.rows[0],
-      message: "Logged into organization successfully!",
-    });
+    // Check if any rows were returned
+    if (result.rows.length > 0) {
+      // Return the first (and only) row as JSON response
+      res.json({
+        organization: result.rows[0],
+        message: "Logged into organization successfully!",
+      });
+    } else {
+      // No organization found with the specified code
+      res.status(404).json({
+        error: "Organization Not Found",
+        message: "No organization found with the specified code.",
+      });
+    }
   } catch (error) {
     console.error("Error logging into organization", error);
     res
@@ -102,6 +114,7 @@ app.post("/organization/login", async function (req, res) {
     }
   }
 });
+
 
 /* 
 Register a new user
@@ -124,10 +137,10 @@ app.post("/user/register", async function (req, res) {
 
     res.json({
       organization: result.rows[0],
-      message: "Organization added successfully!",
+      message: "User added successfully!",
     });
   } catch (error) {
-    console.error("Error adding organization", error);
+    console.error("Error adding user", error);
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
