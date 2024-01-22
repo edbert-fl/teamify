@@ -115,11 +115,6 @@ app.post("/user/register", async function (req, res) {
     const generatedSalt = await bcrypt.genSalt(16);
     const hashedPassword = await bcrypt.hash(password, generatedSalt);
 
-    console.log("displayName:", displayName);
-    console.log("email:", email);
-    console.log("password:", password);
-    console.log("currOrganization:", currOrganization);
-
     const result = await client.query(
       "INSERT INTO users (username, email, hashed_password, salt, organization_code) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [displayName, email, hashedPassword, generatedSalt, currOrganization.code]

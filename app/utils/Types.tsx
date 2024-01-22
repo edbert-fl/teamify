@@ -1,14 +1,14 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 
 export interface Organization {
-  organizationCode: string;
-  organizationName: string;
+  code: string;
+  name: string;
   createdAt?: Date;
 }
 
 export interface User {
   id: number;
-  uesrname: string;
+  username: string;
   email: string;
   hashedPassword: string;
   salt: string;
@@ -23,6 +23,6 @@ export type RootStackParamList = {
     'OrgCreation': undefined;
     'SignUp': undefined;
     'Home': undefined;
-    'Registration': undefined;
+    'Registration': { createOrganization: boolean };
     navigation: StackNavigationProp<RootStackParamList, 'Home'>;
   };

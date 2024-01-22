@@ -15,12 +15,13 @@ var pool = new Pool({
 });
 
 const setupDatabase = async () => {
+  console.log("Creating tables...")
   const client = await pool.connect();
 
   try {
     await client.query(`
         CREATE TABLE IF NOT EXISTS organization (
-            organization_code VARCHAR(12) UNIQUE PRIMARY KEY,
+            organization_code VARCHAR(6) UNIQUE PRIMARY KEY,
             organization_name VARCHAR(50) UNIQUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -29,11 +30,11 @@ const setupDatabase = async () => {
     await client.query(`
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
-            username VARCHAR(50) UNIQUE,
+            username VARCHAR(50),
             email VARCHAR(100) UNIQUE,
             hashed_password VARCHAR(256),
-            salt VARCHAR(16),
-            organization_id INTEGER REFERENCES organization(id),
+            salt VARCHAR(256),
+            organization_code VARCHAR(6) REFERENCES organization(organization_code),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         `);
@@ -46,9 +47,9 @@ const setupDatabase = async () => {
         `);
 
     await client.query(`
-        CREATE TABLE IF NOT EXISTS organisation_roles (
+        CREATE TABLE IF NOT EXISTS organization_roles (
             user_id INTEGER REFERENCES users(id),
-            organisation_id INTEGER REFERENCES organization(id),
+            organisation_id VARCHAR(6) REFERENCES organization(organization_code),
             role_id INTEGER REFERENCES roles(id)
             );
         `);
@@ -58,6 +59,25 @@ const setupDatabase = async () => {
     console.error("Error message:", error.message);
   } finally {
     client.release();
+  }
+};
+
+const dropTables = async () => {
+  const client = await pool.connect();
+
+  try {
+    // Drop tables in the reverse order of their creation to avoid foreign key constraints
+    await client.query("DROP TABLE IF EXISTS organisation_roles;");
+    await client.query("DROP TABLE IF EXISTS roles;");
+    await client.query("DROP TABLE IF EXISTS users;");
+    await client.query("DROP TABLE IF EXISTS organization;");
+  } catch (error) {
+    console.error("Error dropping tables", error);
+    console.error("Failed SQL statement:", error.query);
+    console.error("Error message:", error.message);
+  } finally {
+    client.release();
+    process.exit(0); // Terminate the script after dropping tables
   }
 };
 
@@ -72,19 +92,15 @@ const checkTablesExist = async () => {
       `);
 
     const existingTables = result.rows.map((row) => row.table_name);
+    const tables = ["organization", "users", "roles", "organization_roles"];
 
-    if (
-      existingTables.includes("organization") &&
-      existingTables.includes("users") &&
-      existingTables.includes("roles") &&
-      existingTables.includes("organisation_roles")
-    ) {
-      console.log(
-        "Tables exist: organization, users, roles, organisation_roles"
-      );
-    } else {
-      console.log("Some tables are missing");
-    }
+    tables.forEach((table) => {
+      if (existingTables.includes(table)) {
+        console.log(`Table exists: ${table}`);
+      } else {
+        console.log(`Table is missing: ${table}`);
+      }
+    });
   } catch (error) {
     console.error("Error checking tables existence", error);
   } finally {
@@ -92,5 +108,29 @@ const checkTablesExist = async () => {
   }
 };
 
-setupDatabase();
-checkTablesExist();
+const showFirst5Rows = async () => {
+    const client = await pool.connect();
+  
+    try {
+      const tables = ["organization", "users", "roles", "organization_roles"];
+      for (const table of tables) {
+        const result = await client.query(`SELECT * FROM ${table} LIMIT 5;`);
+        console.log(`First 5 rows of ${table}:`);
+        console.table(result.rows);
+      }
+    } catch (error) {
+      console.error("Error showing first 5 rows", error);
+    } finally {
+      client.release();
+    }
+  };
+  
+  if (process.argv.includes("-d")) {
+    dropTables();
+  } else if (process.argv.includes("-c")) {
+    checkTablesExist();
+  } else if (process.argv.includes("-s")) {
+    showFirst5Rows();
+  } else {
+    setupDatabase();
+  }

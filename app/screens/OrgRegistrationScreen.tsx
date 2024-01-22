@@ -18,7 +18,7 @@ import {
   import { SERVER_URL } from "../../backend/serverconfig";
   
   const OrgRegistrationScreen = () => {
-    const [organisationCode, setOrganisationCode] = useState("");
+    const [organizationCode, setOrganizationCode] = useState("");
     const [loading, setLoading] = useState(false);
   
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -30,7 +30,7 @@ import {
     const signUp = async () => {
       setLoading(true);
       try {
-        console.log("Checking if organisation exists")
+        console.log("Organization Code:", organizationCode);
       } catch (error: any) {
         console.log(error);
         alert("Sign up failed: " + error.message);
@@ -41,18 +41,18 @@ import {
   
     return (
       <View style={styles.container}>
-        <Text style={styles.logo}>Teamify</Text>
+        <Text style={styles.pageTitle}>Enter your organization code</Text>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.formContainer}
         >
           <TextInput
-            value={organisationCode}
+            value={organizationCode}
             style={styles.input}
             placeholder="Organisation Code"
             placeholderTextColor={theme.colors.primary}
             autoCapitalize="none"
-            onChangeText={(text) => setOrganisationCode(text)}
+            onChangeText={(text) => setOrganizationCode(text)}
             enablesReturnKeyAutomatically
           />
   
@@ -99,8 +99,9 @@ import {
       color: theme.colors.primary,
       fontSize: 16,
     },
-    logo: {
-      fontSize: 48,
+    pageTitle: {
+      fontSize: 30,
+      textAlign: "center",
       fontWeight: "bold",
       marginBottom: 20,
       color: theme.colors.primary,

@@ -19,8 +19,9 @@ import { SERVER_URL } from "../../backend/serverconfig";
 import { useAppContext } from "../components/AppContext";
 
 const OrgCreationScreen = () => {
+  const { currOrganization, setCurrOrganization } = useAppContext();
+
   const [organizationName, setOrganizationName] = useState("");
-  const { setCurrOrganization } = useAppContext();
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -45,20 +46,20 @@ const OrgCreationScreen = () => {
       console.log(test.data);
 
       if (organizationName && generatedCode) {
-
-        const response = await axios.post(`${SERVER_URL}/api/add-organization`, {
-            code: generatedCode,
-            name: organizationName,
-          });
         // Save organization information to be added to database after owner account is created.
         setCurrOrganization({
-          organizationCode: generatedCode,
-          organizationName: organizationName,
+          code: generatedCode,
+          name: organizationName,
         });
 
-        console.log(response.data);
+        const response = await axios.post(`${SERVER_URL}/organization/add`, {
+          code: generatedCode,
+          name: organizationName,
+        });
 
-        navigation.navigate("Registration");
+        console.log("Response:", response.data);
+
+        navigation.navigate("Registration", { createOrganization: true });
       } else {
         throw new Error("Organization name or code is undefined.");
       }

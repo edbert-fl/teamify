@@ -10,14 +10,11 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
-import { polyfill } from "react-native/Libraries/Utilities/PolyfillFunctions";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { SERVER_URL } from "../../backend/serverconfig";
-// SERVER_URL below only works for android devices.
-// const SERVER_URL = "http://10.0.2.2:3000";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");

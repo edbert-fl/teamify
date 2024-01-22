@@ -16,8 +16,15 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { SERVER_URL } from "../../backend/serverconfig";
+import { useAppContext } from "../components/AppContext";
 
-const RegistrationScreen = () => {
+interface RegistrationScreenProps {
+  createOrganization: boolean;
+}
+
+const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ createOrganization }) => {
+  const { currOrganization } = useAppContext();
+
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,8 +38,16 @@ const RegistrationScreen = () => {
 
   const signUp = async () => {
     setLoading(true);
+
+    console.log(currOrganization);
+
     try {
-      console.log("HAVENT IMPLEMENTED")
+      const registerUserResponse = await axios.post(`${SERVER_URL}/user/register`,{
+        displayName: displayName,
+        email: email,
+        password: password,
+        currOrganization: currOrganization,
+      })
     } catch (error: any) {
       console.log(error);
       alert("Sign up failed: " + error.message);
