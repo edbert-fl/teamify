@@ -15,25 +15,39 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { SERVER_URL } from "../../backend/serverconfig";
 import axios from "axios";
+import { useAppContext } from "../components/AppContext";
 
 const OrgRegistrationScreen = () => {
+
+  const { currOrganization, setCurrOrganization } = useAppContext();
+
   const [organizationCode, setOrganizationCode] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const handleLogin = () => {
+    setCurrOrganization(null);
     navigation.navigate("Login");
   };
 
   const signUp = async () => {
     setLoading(true);
     try {
-      console.log("Organization Code:", organizationCode);
       const response = await axios.post(`${SERVER_URL}/organization/login`, {
         organizationCode: organizationCode,
       });
-      console.log(response);
+
+      const apiResponse = response.data.organization;
+
+      setCurrOrganization({
+        code: apiResponse.organization_code,
+        name: apiResponse.organization_name,
+        createdAt: new Date(apiResponse.created_at),
+      });
+      
+      navigation.navigate("Registration", { createOrganization: false })
+
     } catch (error: any) {
       console.log(error);
       alert("Sign up failed: " + error.message);

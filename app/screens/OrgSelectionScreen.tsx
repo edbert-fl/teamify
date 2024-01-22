@@ -10,8 +10,6 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
-import { polyfill } from "react-native/Libraries/Utilities/PolyfillFunctions";
-import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";

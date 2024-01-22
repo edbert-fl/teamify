@@ -92,9 +92,10 @@ app.post("/organization/login", async function (req, res) {
     // Check if any rows were returned
     if (result.rows.length > 0) {
       // Return the first (and only) row as JSON response
+      console.log(result.rows[0]);
+
       res.json({
-        organization: result.rows[0],
-        message: "Logged into organization successfully!",
+        organization: result.rows[0]
       });
     } else {
       // No organization found with the specified code
