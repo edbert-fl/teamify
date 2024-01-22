@@ -16,32 +16,57 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { SERVER_URL } from "../../backend/serverconfig";
-// SERVER_URL below only works for android devices.
-// const SERVER_URL = "http://10.0.2.2:3000";
+import { useAppContext } from "../components/AppContext";
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const OrgCreationScreen = () => {
+  const [organizationName, setOrganizationName] = useState("");
+  const { setCurrOrganization } = useAppContext();
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  const handleSignUp = () => {
-    navigation.navigate("OrgSelection");
+  const handleLogin = () => {
+    navigation.navigate("Login");
   };
 
-  const signIn = async () => {
+  const signUp = async () => {
     setLoading(true);
-    const api_url = SERVER_URL + "/api/time";
-
-    console.log(api_url);
-    
     try {
-      const response = await axios.get(api_url);
-      const data = await response.data;
-      console.log(data);
-    } catch (error) {
-      console.error("Error signing in:", error);
+      // Generate a random alphanumeric code of 6 digits
+      const generatedCode = Math.random()
+        .toString(36)
+        .substr(2, 6)
+        .toUpperCase();
+      console.log("Organization hasn't been saved yet.");
+
+      // Make API call to create the organization
+      const test = await axios.get(`${SERVER_URL}/api/time`);
+
+      console.log(test.data);
+
+      if (organizationName && generatedCode) {
+
+        const response = await axios.post(`${SERVER_URL}/api/add-organization`, {
+            code: generatedCode,
+            name: organizationName,
+          });
+        // Save organization information to be added to database after owner account is created.
+        setCurrOrganization({
+          organizationCode: generatedCode,
+          organizationName: organizationName,
+        });
+
+        console.log(response.data);
+
+        navigation.navigate("Registration");
+      } else {
+        throw new Error("Organization name or code is undefined.");
+      }
+
+      navigation.navigate("Registration");
+    } catch (error: any) {
+      console.log(error);
+      alert("Sign up failed: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -49,45 +74,35 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Teamify</Text>
+      <Text style={styles.pageTitle}>Enter Your Organization Information</Text>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.formContainer}
       >
         <TextInput
-          value={email}
+          value={organizationName}
           style={styles.input}
-          placeholder="Email"
+          placeholder="Organization Name"
           placeholderTextColor={theme.colors.primary}
           autoCapitalize="none"
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => setOrganizationName(text)}
           enablesReturnKeyAutomatically
-        />
-        <TextInput
-          value={password}
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor={theme.colors.primary}
-          autoCapitalize="none"
-          secureTextEntry={true}
-          onChangeText={(text) => setPassword(text)}
-          enablesReturnKeyAutomatically={true}
         />
 
         {loading ? (
           <ActivityIndicator size="large" color={theme.colors.primary} />
         ) : (
           <View style={{ marginTop: 50 }}>
-            <TouchableOpacity style={styles.button} onPress={signIn}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
             <View style={{ flex: 1 }} />
+            <TouchableOpacity style={styles.button} onPress={signUp}>
+              <Text style={styles.buttonText}>Continue Registration</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.linkContainer}
-              onPress={handleSignUp}
+              onPress={handleLogin}
             >
-              <Text style={styles.text}>Don't have an account?</Text>
-              <Text style={styles.link}>Sign up instead</Text>
+              <Text style={styles.text}>Already Have an account?</Text>
+              <Text style={styles.link}>Login instead</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -117,8 +132,9 @@ export const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontSize: 16,
   },
-  logo: {
-    fontSize: 48,
+  pageTitle: {
+    fontSize: 30,
+    textAlign: "center",
     fontWeight: "bold",
     marginBottom: 20,
     color: theme.colors.primary,
@@ -165,4 +181,4 @@ export const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default OrgCreationScreen;

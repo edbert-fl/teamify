@@ -8,6 +8,7 @@ var app = express();
 var { Pool } = require("pg");
 
 app.use(cors());
+app.use(express.json());
 
 var pool = new Pool({
   connectionString:
@@ -40,6 +41,29 @@ app.get("/api/time", async function (req, res) {
     }
   }
 });
+
+app.post("/api/add-organization", async function (req, res) {
+  const { code, name } = req.body; // Extract organization name and code from the request body
+
+  try {
+    client = await pool.connect();
+
+    const result = await client.query(
+      'INSERT INTO organization (organization_code, organization_name) VALUES ($1, $2) RETURNING *',
+      [code, name]
+    );
+
+    res.json({ organization: result.rows[0], message: "Organization added successfully!" });
+  } catch (error) {
+    console.error("Error adding organization", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
 
 const PORT = 3000;
 

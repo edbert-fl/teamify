@@ -3,6 +3,8 @@ import LoginScreen from "../screens/LoginScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RegistrationScreen from "../screens/RegistrationScreen";
 import OrgRegistrationScreen from "../screens/OrgRegistrationScreen";
+import OrgCreationScreen from "../screens/OrgCreationScreen";
+import OrgSelectionScreen from "../screens/OrgSelectionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,8 +23,23 @@ const AppNavigator = () => {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="OrgSignUp"
+            name="Registration"
+            component={RegistrationScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="OrgRegistration"
             component={OrgRegistrationScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="OrgSelection"
+            component={OrgSelectionScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="OrgCreation"
+            component={OrgCreationScreen}
             options={{ headerShown: false }}
           />
         </>

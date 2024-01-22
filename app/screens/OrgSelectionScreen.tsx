@@ -16,32 +16,35 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { SERVER_URL } from "../../backend/serverconfig";
-// SERVER_URL below only works for android devices.
-// const SERVER_URL = "http://10.0.2.2:3000";
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const OrgSelectionScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  const handleSignUp = () => {
-    navigation.navigate("OrgSelection");
+  const handleLogin = () => {
+    navigation.navigate("Login");
   };
 
-  const signIn = async () => {
+  const signIntoOrganization = async () => {
     setLoading(true);
-    const api_url = SERVER_URL + "/api/time";
-
-    console.log(api_url);
-    
     try {
-      const response = await axios.get(api_url);
-      const data = await response.data;
-      console.log(data);
-    } catch (error) {
-      console.error("Error signing in:", error);
+      navigation.navigate("OrgRegistration");
+    } catch (error: any) {
+      console.log(error);
+      alert("Sign up failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createNewOrganization = async () => {
+    setLoading(true);
+    try {
+      navigation.navigate("OrgCreation");
+    } catch (error: any) {
+      console.log(error);
+      alert("Sign up failed: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -49,49 +52,39 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Teamify</Text>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.formContainer}
-      >
-        <TextInput
-          value={email}
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor={theme.colors.primary}
-          autoCapitalize="none"
-          onChangeText={(text) => setEmail(text)}
-          enablesReturnKeyAutomatically
-        />
-        <TextInput
-          value={password}
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor={theme.colors.primary}
-          autoCapitalize="none"
-          secureTextEntry={true}
-          onChangeText={(text) => setPassword(text)}
-          enablesReturnKeyAutomatically={true}
-        />
-
+      <Text style={styles.pageTitle}>Sign into existing or create a new organization?</Text>
+      <View style={styles.formContainer}>
         {loading ? (
           <ActivityIndicator size="large" color={theme.colors.primary} />
         ) : (
           <View style={{ marginTop: 50 }}>
-            <TouchableOpacity style={styles.button} onPress={signIn}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
             <View style={{ flex: 1 }} />
             <TouchableOpacity
-              style={styles.linkContainer}
-              onPress={handleSignUp}
+              style={styles.button}
+              onPress={signIntoOrganization}
             >
-              <Text style={styles.text}>Don't have an account?</Text>
-              <Text style={styles.link}>Sign up instead</Text>
+              <Text style={styles.buttonText}>
+                Sign into existing organization
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={createNewOrganization}
+            >
+              <Text style={styles.buttonText}>
+                Create a new organization
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.linkContainer}
+              onPress={handleLogin}
+            >
+              <Text style={styles.text}>Already Have an account?</Text>
+              <Text style={styles.link}>Login instead</Text>
             </TouchableOpacity>
           </View>
         )}
-      </KeyboardAvoidingView>
+      </View>
     </View>
   );
 };
@@ -117,8 +110,9 @@ export const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontSize: 16,
   },
-  logo: {
-    fontSize: 48,
+  pageTitle: {
+    fontSize: 30,
+    textAlign: "center",
     fontWeight: "bold",
     marginBottom: 20,
     color: theme.colors.primary,
@@ -141,14 +135,15 @@ export const styles = StyleSheet.create({
     padding: 15,
     marginTop: 20,
     alignItems: "center",
+    textAlign: "center",
   },
   secondaryButton: {
-    backgroundColor: theme.colors.accent,
+    backgroundColor: theme.colors.secondary,
     borderRadius: 5,
     padding: 15,
     marginTop: 20,
-    width: "100%",
     alignItems: "center",
+    textAlign: "center",
   },
   guestLoginButton: {
     backgroundColor: theme.colors.success,
@@ -165,4 +160,4 @@ export const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default OrgSelectionScreen;

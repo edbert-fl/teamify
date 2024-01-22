@@ -20,9 +20,8 @@ const setupDatabase = async () => {
   try {
     await client.query(`
         CREATE TABLE IF NOT EXISTS organization (
-            id SERIAL PRIMARY KEY,
+            organization_code VARCHAR(12) UNIQUE PRIMARY KEY,
             organization_name VARCHAR(50) UNIQUE,
-            organization_code VARCHAR(12) UNIQUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
@@ -32,7 +31,8 @@ const setupDatabase = async () => {
             id SERIAL PRIMARY KEY,
             username VARCHAR(50) UNIQUE,
             email VARCHAR(100) UNIQUE,
-            hashed_password VARCHAR(100),
+            hashed_password VARCHAR(256),
+            salt VARCHAR(16),
             organization_id INTEGER REFERENCES organization(id),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
