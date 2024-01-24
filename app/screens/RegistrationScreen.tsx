@@ -23,7 +23,7 @@ interface RegistrationScreenProps {
 }
 
 const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ createOrganization }) => {
-  const { currOrganization } = useAppContext();
+  const { currOrganization, setCurrUser } = useAppContext();
 
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
@@ -42,15 +42,27 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ createOrganizat
     console.log(currOrganization);
 
     try {
-      const registerUserResponse = await axios.post(`${SERVER_URL}/user/register`,{
+      const response = await axios.post(`${SERVER_URL}/user/register`,{
         displayName: displayName,
         email: email,
         password: password,
         currOrganization: currOrganization,
       })
+
+      const apiResponseData = response.data.user;
+      // Sets the user to be the currently logged in user.
+      setCurrUser({
+        id: apiResponseData.id,
+        username: apiResponseData.username,
+        email: apiResponseData.email,
+        salt: apiResponseData.salt,
+        organizationCode: apiResponseData.organizationCode,
+        createdAt: new Date(apiResponseData.created_at),
+      });
+
     } catch (error: any) {
       console.log(error);
-      alert("Sign up failed: " + error.message);
+      alert("Registration failed: " + error.message);
     } finally {
       setLoading(false);
     }

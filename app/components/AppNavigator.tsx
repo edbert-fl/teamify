@@ -5,12 +5,23 @@ import RegistrationScreen from "../screens/RegistrationScreen";
 import OrgRegistrationScreen from "../screens/OrgRegistrationScreen";
 import OrgCreationScreen from "../screens/OrgCreationScreen";
 import OrgSelectionScreen from "../screens/OrgSelectionScreen";
+import { useAppContext } from "./AppContext";
+import HomeScreen from "../screens/HomeScreen";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
+  const { currUser } = useAppContext();
+
   return (
     <Stack.Navigator initialRouteName="Home">
+      {currUser ? (
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+      ) : (
         <>
           <Stack.Screen
             name="Login"
@@ -43,6 +54,7 @@ const AppNavigator = () => {
             options={{ headerShown: false }}
           />
         </>
+      )}
     </Stack.Navigator>
   );
 };

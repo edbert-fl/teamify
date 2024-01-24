@@ -13,9 +13,8 @@ app.use(express.json());
 
 var pool = new Pool({
   connectionString:
-    process.env.DATABASE_URL ||
-    "postgres://qltagrwv:Va6J5vc8d9VkQKypRAEG4jTr1O4Bg77a@rosie.db.elephantsql.com/qltagrwv",
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+    process.env.REACT_APP_DATABASE_URL,
+  ssl: process.env.REACT_APP_DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
 let client = null;
@@ -123,6 +122,11 @@ Register a new user
 app.post("/user/register", async function (req, res) {
   const { displayName, email, password, currOrganization } = req.body;
 
+  console.log("displayName", displayName);
+  console.log("email", email);
+  console.log("password", password);
+  console.log("currOrganization", currOrganization);
+
   try {
     client = await pool.connect();
 
@@ -134,10 +138,10 @@ app.post("/user/register", async function (req, res) {
       [displayName, email, hashedPassword, generatedSalt, currOrganization.code]
     );
 
-    console.log("Resulting Data:", result.data);
+    console.log("Resulting Data:", result.rows[0]);
 
     res.json({
-      organization: result.rows[0],
+      user: result.rows[0],
       message: "User added successfully!",
     });
   } catch (error) {
@@ -145,6 +149,49 @@ app.post("/user/register", async function (req, res) {
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
+/* 
+Log into a user account
+*/
+app.post("/user/login", async function (req, res) {
+  const { email, password } = req.body;
+
+  console.log("email", email);
+  console.log("password", password);
+
+  try {
+    const client = await pool.connect();
+
+    // Retrieve hashed_password and salt from the database for the specified email
+    const result = await client.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 1) {
+      const storedHashedPassword = result.rows[0].hashed_password;
+      const salt = result.rows[0].salt;
+
+      // Use the retrieved salt to hash the user's typed password
+      const hashedInputPassword = await bcrypt.hash(password, salt);
+
+      if (hashedInputPassword === storedHashedPassword) {
+        res.json({ user: result.rows[0], message: "Authentication successful!" });
+      } else {
+        res.status(401).json({ error: "Authentication failed" });
+      }
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error during login", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
   } finally {
     if (client) {
       client.release();

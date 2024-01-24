@@ -9,9 +9,8 @@ app.use(cors());
 
 var pool = new Pool({
   connectionString:
-    process.env.DATABASE_URL ||
-    "postgres://qltagrwv:Va6J5vc8d9VkQKypRAEG4jTr1O4Bg77a@rosie.db.elephantsql.com/qltagrwv",
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+    process.env.REACT_APP_DATABASE_URL ,
+  ssl: process.env.REACT_APP_DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
 const setupDatabase = async () => {
@@ -67,10 +66,10 @@ const dropTables = async () => {
 
   try {
     // Drop tables in the reverse order of their creation to avoid foreign key constraints
-    await client.query("DROP TABLE IF EXISTS organisation_roles;");
-    await client.query("DROP TABLE IF EXISTS roles;");
-    await client.query("DROP TABLE IF EXISTS users;");
-    await client.query("DROP TABLE IF EXISTS organization;");
+    await client.query("DROP TABLE IF EXISTS users CASCADE;");
+    await client.query("DROP TABLE IF EXISTS organisation_roles CASCADE;");
+    await client.query("DROP TABLE IF EXISTS roles CASCADE;");
+    await client.query("DROP TABLE IF EXISTS organization CASCADE;");
   } catch (error) {
     console.error("Error dropping tables", error);
     console.error("Failed SQL statement:", error.query);

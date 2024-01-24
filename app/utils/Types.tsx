@@ -10,7 +10,6 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  hashedPassword: string;
   salt: string;
   organizationCode: string;
   createdAt?: Date;

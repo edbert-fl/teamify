@@ -17,5 +17,6 @@ export const theme = {
     divider: "#E0E0E0",
     search: "#EAEAEA",
     imagePlaceholder: "#EEEEEE",
+    faded: "rgba(140, 140, 140, 0.5)"
   },
 };

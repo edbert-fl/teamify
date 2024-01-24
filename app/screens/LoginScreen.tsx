@@ -15,8 +15,11 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { SERVER_URL } from "../../backend/serverconfig";
+import { useAppContext } from "../components/AppContext";
 
 const LoginScreen = () => {
+  const { setCurrUser } = useAppContext();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,16 +32,28 @@ const LoginScreen = () => {
 
   const signIn = async () => {
     setLoading(true);
-    const api_url = SERVER_URL + "/api/time";
 
-    console.log(api_url);
-    
+    console.log(SERVER_URL);
+
     try {
-      const response = await axios.get(api_url);
-      const data = await response.data;
-      console.log(data);
+      const response = await axios.post(`${SERVER_URL}/user/login`,{
+        email: email,
+        password: password,
+      })
+
+      const apiResponseData = response.data.user;
+      // Sets the user to be the currently logged in user.
+      setCurrUser({
+        id: apiResponseData.id,
+        username: apiResponseData.username,
+        email: apiResponseData.email,
+        salt: apiResponseData.salt,
+        organizationCode: apiResponseData.organizationCode,
+        createdAt: new Date(apiResponseData.created_at),
+      });
+
     } catch (error) {
-      console.error("Error signing in:", error);
+      alert(`Error signing in: ${error}`);
     } finally {
       setLoading(false);
     }
