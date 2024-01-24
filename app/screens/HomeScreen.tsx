@@ -10,7 +10,6 @@ import {
 import { Camera, CameraType } from "expo-camera";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../components/AppContext";
-import * as MediaLibrary from "expo-media-library";
 import Clock from "../components/Clock";
 
 const HomeScreen = () => {

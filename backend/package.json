@@ -16,5 +16,8 @@
     "pg": "^8.11.3",
     "whatwg-fetch": "^3.6.20",
     "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.0"
   }
 }

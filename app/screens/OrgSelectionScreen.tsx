@@ -2,18 +2,14 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   ActivityIndicator,
-  KeyboardAvoidingView,
   TouchableOpacity,
-  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
-import { SERVER_URL } from "../../backend/serverconfig";
 
 const OrgSelectionScreen = () => {
   const [loading, setLoading] = useState(false);

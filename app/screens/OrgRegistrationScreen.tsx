@@ -13,9 +13,10 @@ import { theme } from "../utils/Styles";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
-import { SERVER_URL } from "../../backend/serverconfig";
 import axios from "axios";
 import { useAppContext } from "../components/AppContext";
+
+import { SERVER_URL } from "../utils/ServerAddress"
 
 const OrgRegistrationScreen = () => {
 

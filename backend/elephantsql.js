@@ -11,10 +11,12 @@ var { Pool } = require("pg");
 app.use(cors());
 app.use(express.json());
 
+require('dotenv').config();
+
 var pool = new Pool({
   connectionString:
-    process.env.REACT_APP_DATABASE_URL,
-  ssl: process.env.REACT_APP_DATABASE_URL ? { rejectUnauthorized: false } : false,
+    process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
 let client = null;

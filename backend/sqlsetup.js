@@ -7,10 +7,12 @@ var { Pool } = require("pg");
 
 app.use(cors());
 
+require('dotenv').config();
+
 var pool = new Pool({
   connectionString:
-    process.env.REACT_APP_DATABASE_URL ,
-  ssl: process.env.REACT_APP_DATABASE_URL ? { rejectUnauthorized: false } : false,
+    process.env.DATABASE_URL ,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
 const setupDatabase = async () => {
