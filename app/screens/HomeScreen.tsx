@@ -30,10 +30,15 @@ const HomeScreen = () => {
 
   const clockIn = () => {
     takePicture();
-    const photoValid = validatePhoto();
 
-    if (photoValid) setClockedIn(true);
-    else alert("Invalid Photo, please follow instructions and try again!");
+    if (photoIsValid()) {
+      setTimeout(() => {
+        setDisplayPhoto(null);
+        setClockedIn(true);
+      }, 3000);
+    } else {
+      alert("Invalid Photo, please follow instructions and try again!");
+    }
   };
 
   const clockOut = () => {
@@ -46,7 +51,7 @@ const HomeScreen = () => {
     setClockedIn(false);
   };
 
-  const validatePhoto = () => {
+  const photoIsValid = () => {
     // TODO: IMPLEMENT
     return true;
   };
@@ -62,10 +67,6 @@ const HomeScreen = () => {
       const photo = await cameraRef.current.takePictureAsync(options);
       setCapturedPhoto(photo.uri);
       setDisplayPhoto(photo.uri);
-
-      setTimeout(() => {
-        setDisplayPhoto(null);
-      }, 3000);
     } else {
       console.error("Camera handle is null");
     }
@@ -88,7 +89,7 @@ const HomeScreen = () => {
         <Clock />
 
         {displayPhoto ? (
-          <Image style={styles.capturedPhoto} source={{ uri: displayPhoto }}/>
+          <Image style={styles.capturedPhoto} source={{ uri: displayPhoto }} />
         ) : (
           <Camera style={styles.camera} type={type} ref={cameraRef}>
             {clockedIn ? (
@@ -192,12 +193,12 @@ export const styles = StyleSheet.create({
     marginBottom: 30,
   },
   status: {
-    backgroundColor: theme.colors.faded,
+    backgroundColor: theme.colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    width: 125,
+    width: 110,
     padding: 10,
-    borderRadius: 14,
+    borderRadius: 8,
     margin: 10,
   },
   clockOutOptions: {
