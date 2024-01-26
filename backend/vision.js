@@ -1,7 +1,7 @@
 const createClient = require("@azure-rest/ai-vision-image-analysis").default;
 const { AzureKeyCredential } = require("@azure/core-auth");
 
-// Load the .env file if it exists
+// Retrieve Azure Cognitive Services Vision API endpoint and key from environment variables
 require("dotenv").config();
 
 const endpoint = process.env["VISION_ENDPOINT"];
@@ -10,10 +10,12 @@ const key = process.env["VISION_KEY"];
 const credential = new AzureKeyCredential(key);
 const client = createClient(endpoint, credential);
 
+// Specify the features to request from Vision API
 const features = ["Read", "People"];
 
-async function analyzeImageFromFile(uint8Array) {
-
+// Function to analyze an image for whether it contains a face from a given Uint8Array
+async function analyzeImage(uint8Array) {
+  // Make a request to the image analysis endpoint with the provided image data
   const result = await client.path('/imageanalysis:analyze').post({
     body: uint8Array,
     queryParameters: {
@@ -23,53 +25,21 @@ async function analyzeImageFromFile(uint8Array) {
     contentType: 'application/octet-stream'
   });
 
-  console.log(`Image Metadata: ${JSON.stringify(result.body.metadata)}`);
+  // Initialize a variable to track whether a person is found
+  let personFound = false;
 
-  var personFound = false;
+  // Check if the image analysis result includes information about people
   if (result.body.peopleResult) {
-     result.body.peopleResult.values.some((person) => {
-      if (person.confidence > 0.7) personFound = true;
-    });
-
-    if (personFound) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-}
-
-
-async function analyzeImageFromUrl(imageUrl) {
-  console.log("Vision:", imageUrl);
-
-  const result = await client.path("/imageanalysis:analyze").post({
-    body: {
-      url: imageUrl,
-    },
-    queryParameters: {
-      features: features,
-    },
-    contentType: "application/json",
-  });
-
-  const iaResult = result.body;
-
-  console.log("Log:", result.body);
-
-  if (result.body.peopleResult && result.body.peopleResult.values.length > 0) {
-
-    console.log("People Values:", result.body.peopleResult.values)
-
-    result.body.peopleResult.values.forEach((person) => {
-      if (person.confidence > 0.7) {
-        return true;
-      }
+    // Use Array.some to iterate over people and check if any person has confidence greater than 0.7
+    personFound = result.body.peopleResult.values.some((person) => {
+      return person.confidence > 0.7;
     });
   }
-  return false;
+
+  // Return the result indicating whether a person was found
+  return personFound;
 }
 
 module.exports = {
-  analyzeImageFromFile
+  analyzeImage
 };
