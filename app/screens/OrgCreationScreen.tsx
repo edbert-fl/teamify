@@ -38,12 +38,8 @@ const OrgCreationScreen = () => {
         .toString(36)
         .substr(2, 6)
         .toUpperCase();
-      console.log("Organization hasn't been saved yet.");
 
-      // Make API call to create the organization
-      const test = await axios.get(`${SERVER_URL}/api/time`);
-
-      console.log(test.data);
+      console.log("TODO: Check if Organization has already been created");
 
       if (organizationName && generatedCode) {
         // Save organization information to be added to database after owner account is created.
@@ -59,12 +55,10 @@ const OrgCreationScreen = () => {
 
         console.log("Response:", response.data);
 
-        navigation.navigate("Registration", { createOrganization: true });
+        navigation.navigate('Registration', { userCreatedOrganization: true });
       } else {
         throw new Error("Organization name or code is undefined.");
       }
-
-      navigation.navigate("Registration");
     } catch (error: any) {
       console.log(error);
       alert("Sign up failed: " + error.message);

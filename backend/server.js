@@ -157,12 +157,14 @@ app.post("/user/register/admin", async function (req, res) {
       [displayName, email, hashedPassword, generatedSalt, currOrganization.code]
     );
 
-    console.log("Resulting Data:", result.rows[0]);
+    console.log(createUserResult.rows[0]);
 
-    const assignAdminRoleResult = client.query(
+    const assignAdminRoleResult = await client.query(
       "INSERT INTO organization_roles (user_id, organization_code, role_id) VALUES ($1, $2, $3) RETURNING *",
-      [result.rows[0].id, currOrganization.code, ROLES.ADMIN]
+      [createUserResult.rows[0].id, currOrganization.code, ROLES.ADMIN]
     )
+
+    console.log("organization_roles:", assignAdminRoleResult);
 
     res.json({
       user: createUserResult.rows[0],

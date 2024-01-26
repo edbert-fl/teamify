@@ -11,55 +11,74 @@ import {
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
 import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../utils/Types";
+import { RootStackNavigationProp, RootStackParamList, RootStackRouteProp } from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 
-import { SERVER_URL } from "../utils/ServerAddress"
+import { SERVER_URL } from "../utils/ServerAddress";
+
+type RegistrationScreenRouteProp = RouteProp<RootStackParamList, "Registration">;
 
 interface RegistrationScreenProps {
-  createOrganization: boolean;
+  route: RootStackRouteProp<'Registration'>;
+  navigation: RootStackNavigationProp;
 }
 
-const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ createOrganization }) => {
+const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigation }) => {
   const { currOrganization, setCurrUser } = useAppContext();
+
+  const { userCreatedOrganization } = route.params;
 
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
   const handleLogin = () => {
     navigation.navigate("Login");
   };
 
-  const signUp = async () => {
+  const signUp = async (userCreatedOrganization: boolean) => {
     setLoading(true);
 
+    console.log("userCreatedOrganization3:", userCreatedOrganization);
     console.log(currOrganization);
 
     try {
-      const response = await axios.post(`${SERVER_URL}/user/register`,{
-        displayName: displayName,
-        email: email,
-        password: password,
-        currOrganization: currOrganization,
-      })
+      let response = null;
+      if (userCreatedOrganization) {
+        // Post request to server to create user as an admin.
+        response = await axios.post(`${SERVER_URL}/user/register/admin`, {
+          displayName: displayName,
+          email: email,
+          password: password,
+          currOrganization: currOrganization,
+        });
 
-      const apiResponseData = response.data.user;
-      // Sets the user to be the currently logged in user.
-      setCurrUser({
-        id: apiResponseData.id,
-        username: apiResponseData.username,
-        email: apiResponseData.email,
-        salt: apiResponseData.salt,
-        organizationCode: apiResponseData.organizationCode,
-        createdAt: new Date(apiResponseData.created_at),
-      });
+        console.log("User has been made admin of ", currOrganization.name);
+      } else {
+        // Post request to server to create user as a normal user.
+        response = await axios.post(`${SERVER_URL}/user/register`, {
+          displayName: displayName,
+          email: email,
+          password: password,
+          currOrganization: currOrganization,
+        });
+      }
 
+      if (response.data.user) {
+        const apiResponseData = response.data.user;
+        // Sets the user to be the currently logged in user.
+        setCurrUser({
+          id: apiResponseData.id,
+          username: apiResponseData.username,
+          email: apiResponseData.email,
+          salt: apiResponseData.salt,
+          organizationCode: apiResponseData.organizationCode,
+          createdAt: new Date(apiResponseData.created_at),
+        });
+      }
     } catch (error: any) {
       console.log(error);
       alert("Registration failed: " + error.message);
@@ -109,7 +128,7 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ createOrganizat
         ) : (
           <View style={{ marginTop: 50 }}>
             <View style={{ flex: 1 }} />
-            <TouchableOpacity style={styles.button} onPress={signUp}>
+            <TouchableOpacity style={styles.button} onPress={() => signUp(userCreatedOrganization)}>
               <Text style={styles.buttonText}>Create Account</Text>
             </TouchableOpacity>
             <TouchableOpacity
