@@ -1,4 +1,4 @@
-const { analyzeImageFromFile } = require("./vision");
+const { analyzeImage } = require("./vision");
 
 const express = require("express");
 const multer = require("multer");
@@ -29,30 +29,10 @@ app.get("/api", function (req, res, next) {
 });
 
 /* 
-For testing if the API is running.
-*/
-app.get("/api/time", async function (req, res) {
-  try {
-    client = await pool.connect();
-    const result = await client.query('SELECT NOW() AS "theTime"');
-    res.json({ currentTime: result.rows[0].theTime });
-  } catch (error) {
-    console.error("Error running query", error);
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
-  } finally {
-    if (client) {
-      client.release();
-    }
-  }
-});
-
-/* 
 Add a new organization to the database
 */
 app.post("/organization/add", async function (req, res) {
-  const { code, name } = req.body; // Extract organization name and code from the request body
+  const { code, name } = req.body;
 
   try {
     client = await pool.connect();
@@ -84,8 +64,6 @@ Log into existing organization
 app.post("/organization/login", async function (req, res) {
   const { organizationCode } = req.body;
 
-  console.log("organizationCode", organizationCode);
-
   try {
     const client = await pool.connect();
 
@@ -94,7 +72,6 @@ app.post("/organization/login", async function (req, res) {
       [organizationCode]
     );
 
-    // Check if any rows were returned
     if (result.rows.length > 0) {
       // Return the first (and only) row as JSON response
       console.log(result.rows[0]);
@@ -103,7 +80,6 @@ app.post("/organization/login", async function (req, res) {
         organization: result.rows[0],
       });
     } else {
-      // No organization found with the specified code
       res.status(404).json({
         error: "Organization Not Found",
         message: "No organization found with the specified code.",
@@ -127,14 +103,10 @@ Register a new user
 app.post("/user/register", async function (req, res) {
   const { displayName, email, password, currOrganization } = req.body;
 
-  console.log("displayName", displayName);
-  console.log("email", email);
-  console.log("password", password);
-  console.log("currOrganization", currOrganization);
-
   try {
     client = await pool.connect();
 
+    // Generates a salt, adds it to the password and hashes the password for storage
     const generatedSalt = await bcrypt.genSalt(16);
     const hashedPassword = await bcrypt.hash(password, generatedSalt);
 
@@ -167,14 +139,11 @@ Log into a user account
 app.post("/user/login", async function (req, res) {
   const { email, password } = req.body;
 
-  console.log("email", email);
-  console.log("password", password);
-
   try {
     const client = await pool.connect();
 
-    // Retrieve hashed_password and salt from the database for the specified email
-    const result = await client.query("SELECT * FROM users WHERE email = $1", [
+    // Retrieve hashed password and salt from the database for the specified email
+    const result = await client.query("SELECT hashed_password, salt FROM users WHERE email = $1", [
       email,
     ]);
 
@@ -185,6 +154,7 @@ app.post("/user/login", async function (req, res) {
       // Use the retrieved salt to hash the user's typed password
       const hashedInputPassword = await bcrypt.hash(password, salt);
 
+      // Compare the typed password and the stored hash password from the database
       if (hashedInputPassword === storedHashedPassword) {
         res.json({
           user: result.rows[0],
@@ -212,7 +182,7 @@ app.post("/user/login", async function (req, res) {
 Add a new organization to the database
 */
 app.post("/organization/add", async function (req, res) {
-  const { code, name } = req.body; // Extract organization name and code from the request body
+  const { code, name } = req.body;
 
   try {
     client = await pool.connect();
@@ -239,20 +209,25 @@ app.post("/organization/add", async function (req, res) {
 });
 
 /* 
-Check if an image contains a person.
+  Endpoint to verify if an image contains a person.
+  Expects a POST request with a single 'image' file.
 */
 app.post("/verify/person", upload.single('image'), async (req, res) => {
-  try {
-    const file = req.file;
+  // Extract the file from the request
+  const file = req.file;
 
+  try {
     if (file) {
+      // Convert the file to a uint8Array for analysis
       const imageBuffer = await sharp(file.buffer).toBuffer();
       const uint8Array = new Uint8Array(imageBuffer);
 
-      const isPersonPresent = await analyzeImageFromFile(uint8Array);
+      // Analyze the image to check if a person is present
+      const isPersonPresent = await analyzeImage(uint8Array);
 
       console.log("personPresent:", isPersonPresent);
 
+      // Respond with the analysis result
       res.json({
         isPersonPresent: isPersonPresent,
       });
@@ -260,19 +235,17 @@ app.post("/verify/person", upload.single('image'), async (req, res) => {
       console.log("Error: No file found");
     }
   } catch (error) {
+    // Handle errors during image verification
     console.error("Error verifying person", error);
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
-  } finally {
-    if (client) {
-      client.release();
-    }
   }
 });
 
 const PORT = 3000;
 
+// Create an HTTP server using Express app
 http.createServer(app).listen(PORT, function () {
   console.log(`CORS-enabled web server listening on port ${PORT}`);
 });
