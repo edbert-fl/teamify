@@ -6,7 +6,8 @@ import OrgRegistrationScreen from "../screens/OrgRegistrationScreen";
 import OrgCreationScreen from "../screens/OrgCreationScreen";
 import OrgSelectionScreen from "../screens/OrgSelectionScreen";
 import { useAppContext } from "./AppContext";
-import HomeScreen from "../screens/HomeScreen";
+import ClockInScreen from "../screens/ClockInScreen";
+import AuthAppNavigator from "./AuthAppNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,11 +15,11 @@ const AppNavigator = () => {
   const { currUser } = useAppContext();
 
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator initialRouteName="AuthApp">
       {currUser ? (
         <Stack.Screen
-          name="Home"
-          component={HomeScreen}
+          name="AuthApp"
+          component={AuthAppNavigator}
           options={{ headerShown: false }}
         />
       ) : (
