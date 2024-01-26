@@ -7,6 +7,7 @@ import {
   Image,
   SafeAreaView,
   Platform,
+  Alert,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import { theme } from "../utils/Styles";
@@ -37,14 +38,14 @@ const HomeScreen = () => {
     const personPresent = await checkIfPersonPresent(photoUri);
 
     if (personPresent) {
+      Alert.alert("Success!", "You've been clocked in.");
       setTimeout(() => {
         setCapturedPhoto(null);
         setClockedIn(true);
       }, 3000);
     } else {
       setCapturedPhoto(null);
-
-      alert("Invalid Photo, please follow instructions and try again!");
+      Alert.alert("Failed to clock in", "Nobody was detected in the photo. Please try again!");
     }
   };
 
@@ -159,12 +160,12 @@ const HomeScreen = () => {
             <Text style={styles.buttonText}>Clock in</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.temporaryButton}
           onPress={() => setCurrUser(null)}
         >
           <Text style={styles.buttonText}>Temporary Logout</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </SafeAreaView>
   );
