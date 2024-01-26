@@ -6,11 +6,16 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../components/AppContext";
 import Clock from "../components/Clock";
+import axios from "axios";
+import FormData from 'form-data';
+
+import { SERVER_URL } from "../utils/ServerAddress";
 
 const HomeScreen = () => {
   const { setCurrUser } = useAppContext();
@@ -21,22 +26,24 @@ const HomeScreen = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
   const [clockedIn, setClockedIn] = useState(false);
-  const [displayPhoto, setDisplayPhoto] = useState(null);
 
   useEffect(() => {
     // Request permissions for using camera
     requestPermissions();
   }, []);
 
-  const clockIn = () => {
-    takePicture();
+  const clockIn = async () => {
+    const photoUri = await takePicture();
+    const personPresent = await checkIfPersonPresent(photoUri);
 
-    if (photoIsValid()) {
+    if (personPresent) {
       setTimeout(() => {
-        setDisplayPhoto(null);
+        setCapturedPhoto(null);
         setClockedIn(true);
       }, 3000);
     } else {
+      setCapturedPhoto(null);
+
       alert("Invalid Photo, please follow instructions and try again!");
     }
   };
@@ -51,9 +58,40 @@ const HomeScreen = () => {
     setClockedIn(false);
   };
 
-  const photoIsValid = () => {
-    // TODO: IMPLEMENT
-    return true;
+  const checkIfPersonPresent = async (photoUri: string) => {
+    try {
+      const formData = new FormData();
+
+      // Changes fileUri path based on platform.
+      const fileUri = Platform.OS === 'android' ? photoUri : photoUri.replace('file://', '');
+
+      // Uses file's name.
+      const fileName = fileUri.split('/').pop();
+
+      formData.append('image', {
+        uri: fileUri,
+        name: fileName,
+        type: `image/jpeg`,
+      });
+
+      // Send the file to the server for analysis.
+      const response = await axios.post(`${SERVER_URL}/verify/person`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      // Check if the request was successful
+      if (response.status !== 200) {
+        throw new Error('Failed to upload file to the server');
+      }
+
+      return response.data.isPersonPresent;
+
+    } catch (error) {
+      console.error("Error:", error.message);
+      return false;
+    }
   };
 
   const takePicture = async () => {
@@ -66,9 +104,10 @@ const HomeScreen = () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync(options);
       setCapturedPhoto(photo.uri);
-      setDisplayPhoto(photo.uri);
+      return photo.uri;
     } else {
       console.error("Camera handle is null");
+      return null;
     }
   };
 
@@ -88,8 +127,8 @@ const HomeScreen = () => {
       <View style={styles.container}>
         <Clock />
 
-        {displayPhoto ? (
-          <Image style={styles.capturedPhoto} source={{ uri: displayPhoto }} />
+        {capturedPhoto ? (
+          <Image style={styles.capturedPhoto} source={{ uri: capturedPhoto }} />
         ) : (
           <Camera style={styles.camera} type={type} ref={cameraRef}>
             {clockedIn ? (
