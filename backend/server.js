@@ -13,6 +13,12 @@ const { Pool } = require("pg");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+const ROLES = {
+  ADMIN: 1,
+  MANAGER: 2,
+  USER: 3
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -119,6 +125,48 @@ app.post("/user/register", async function (req, res) {
 
     res.json({
       user: result.rows[0],
+      message: "User added successfully!",
+    });
+  } catch (error) {
+    console.error("Error adding user", error);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
+/* 
+Register a new user
+*/
+app.post("/user/register/admin", async function (req, res) {
+  const { displayName, email, password, currOrganization } = req.body;
+
+  try {
+    client = await pool.connect();
+
+    // Generates a salt, adds it to the password and hashes the password for storage
+    const generatedSalt = await bcrypt.genSalt(16);
+    const hashedPassword = await bcrypt.hash(password, generatedSalt);
+
+    const createUserResult = await client.query(
+      "INSERT INTO users (username, email, hashed_password, salt, organization_code) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [displayName, email, hashedPassword, generatedSalt, currOrganization.code]
+    );
+
+    console.log("Resulting Data:", result.rows[0]);
+
+    const assignAdminRoleResult = client.query(
+      "INSERT INTO organization_roles (user_id, organization_code, role_id) VALUES ($1, $2, $3) RETURNING *",
+      [result.rows[0].id, currOrganization.code, ROLES.ADMIN]
+    )
+
+    res.json({
+      user: createUserResult.rows[0],
+      role: assignAdminRoleResult.rows[0],
       message: "User added successfully!",
     });
   } catch (error) {

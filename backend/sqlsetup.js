@@ -68,7 +68,7 @@ const setupDatabase = async () => {
     await client.query(`
         CREATE TABLE IF NOT EXISTS organization_roles (
             user_id INTEGER REFERENCES users(id),
-            organisation_id VARCHAR(6) REFERENCES organization(organization_code),
+            organization_code VARCHAR(6) REFERENCES organization(organization_code),
             role_id INTEGER REFERENCES roles(id)
             );
         `);
@@ -90,7 +90,7 @@ const dropTables = async () => {
     // Drop tables in the reverse order of their creation to avoid foreign key constraints
     await client.query("DROP TABLE IF EXISTS users CASCADE;");
     console.log('users table dropped successfully');
-    
+
     await client.query("DROP TABLE IF EXISTS organization_roles CASCADE;");
     console.log('organization_roles table dropped successfully');
 
