@@ -16,7 +16,7 @@ const Clock = () => {
 
   const formattedTime = currentTime.toLocaleTimeString([], {
     hour: "2-digit",
-    minute: "2-digit",
+    minute: "2-digit"
   });
 
   return (
@@ -30,10 +30,11 @@ const styles = StyleSheet.create({
     clockContainer: {
         alignItems: "center",
         justifyContent: "center",
-        paddingVertical: 20,
+        paddingVertical: 30,
       },
       clockText: {
-        fontSize: 36,
+        fontSize: 42,
+        fontWeight: "300",
         color: theme.colors.buttonText,
       },
   });

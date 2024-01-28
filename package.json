@@ -28,6 +28,7 @@
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-camera": "^4.2.1",
+    "react-native-vector-icons": "^10.0.3",
     "typescript": "^5.1.3",
     "whatwg-fetch": "^3.6.20",
     "xmlhttprequest": "^1.8.0"

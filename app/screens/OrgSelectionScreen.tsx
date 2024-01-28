@@ -124,7 +124,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   button: {
-    backgroundColor: theme.colors.accent,
+    backgroundColor: theme.colors.primary,
     borderRadius: 5,
     padding: 15,
     marginTop: 20,
@@ -132,7 +132,7 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
   secondaryButton: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: theme.colors.accent,
     borderRadius: 5,
     padding: 15,
     marginTop: 20,

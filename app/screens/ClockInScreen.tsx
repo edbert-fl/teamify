@@ -160,12 +160,6 @@ const ClockInScreen = () => {
             <Text style={styles.buttonText}>Clock in</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          style={styles.temporaryButton}
-          onPress={() => setCurrUser(null)}
-        >
-          <Text style={styles.buttonText}>Temporary Logout</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -179,12 +173,12 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingBottom: 50,
+    paddingBottom: 100,
     backgroundColor: theme.colors.background,
   },
   clockIn: {
     backgroundColor: theme.colors.primary,
-    borderRadius: 5,
+    borderRadius: 12,
     padding: 15,
     marginBottom: 20,
     alignItems: "center",
@@ -192,27 +186,20 @@ export const styles = StyleSheet.create({
   clockOut: {
     flex: 1,
     backgroundColor: theme.colors.accent,
-    borderRadius: 5,
+    borderRadius: 12,
     padding: 15,
     marginBottom: 20,
     alignItems: "center",
-    marginLeft: 5,
+    marginLeft: 7,
   },
   onBreak: {
     flex: 1,
     backgroundColor: theme.colors.primary,
-    borderRadius: 5,
+    borderRadius: 12,
     padding: 15,
     marginBottom: 20,
     alignItems: "center",
-    marginRight: 5,
-  },
-  temporaryButton: {
-    backgroundColor: theme.colors.accent,
-    borderRadius: 5,
-    padding: 15,
-    marginBottom: 20,
-    alignItems: "center",
+    marginRight: 7,
   },
   buttonText: {
     color: "white",

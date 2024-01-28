@@ -16,6 +16,12 @@ export interface User {
   createdAt?: Date;
 }
 
+export type RootBottomTabParamList = {
+  Home: undefined;
+  ClockIn: undefined;
+  Schedule: undefined;
+}
+
 export type RootStackParamList = {
   Login: undefined;
   OrgSelection: undefined;

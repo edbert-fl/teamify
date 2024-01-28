@@ -11,8 +11,7 @@ import {
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
 import axios from "axios";
-import { RouteProp, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp,  } from "@react-navigation/native";
 import { RootStackNavigationProp, RootStackParamList, RootStackRouteProp } from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 

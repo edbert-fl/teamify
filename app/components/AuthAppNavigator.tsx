@@ -39,6 +39,16 @@ const Root = () => {
     return <Icon name={name} color={iconColor} size={size} />;
   };
 
+  const tabBarLabel = (focused, route) => {
+    const textColor = focused ? theme.colors.primary : theme.colors.placeholderText;
+
+    return <Text style={{
+      color: textColor,
+      fontSize: 12,
+      fontWeight: "500"
+    }}>{route.name}</Text>
+  }
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -57,11 +67,7 @@ const Root = () => {
           paddingTop: 5,
           borderTopWidth: 0
         },
-        tabBarLabelStyle: {
-          color: theme.colors.placeholderText,
-          fontSize: 12,
-          fontWeight: 500
-        }
+        tabBarLabel: ({ focused }) => tabBarLabel(focused, route)
       })}
     >
       <Tab.Screen
