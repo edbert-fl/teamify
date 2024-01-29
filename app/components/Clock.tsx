@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
       clockText: {
         fontSize: 42,
         fontWeight: "300",
-        color: theme.colors.buttonText,
+        color: theme.colors.primaryText,
       },
   });
 

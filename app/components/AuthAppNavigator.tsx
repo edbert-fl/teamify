@@ -1,17 +1,14 @@
-import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/MaterialIcons";
+
+import {Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { theme } from "../utils/Styles";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import AdminDashboardScreen from "../screens/AdminDashboardScreen";
 import ClockInScreen from "../screens/ClockInScreen";
 import HomeScreen from "../screens/HomeScreen";
-import { theme } from "../utils/Styles";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { RootBottomTabParamList } from "../utils/Types";
 
 const Root = () => {
-  const navigation =
-    useNavigation<BottomTabNavigationProp<RootBottomTabParamList>>();
   const Tab = createBottomTabNavigator();
 
   const tabBarIcon = (focused, route) => {
@@ -31,7 +28,11 @@ const Root = () => {
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 28,
       },
-      // Add more route name to icon mappings as needed
+      Organization: {
+        name: "work",
+        color: focused ? theme.colors.primary : theme.colors.placeholderText,
+        size: 28,
+      },
     };
 
     const { name, color: iconColor, size } = iconMappings[route.name] || {};
@@ -83,6 +84,11 @@ const Root = () => {
       <Tab.Screen
         name="Calendar"
         component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Organization"
+        component={AdminDashboardScreen}
         options={{ headerShown: false }}
       />
     </Tab.Navigator>
