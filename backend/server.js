@@ -117,7 +117,7 @@ app.post("/user/register", async function (req, res) {
     const hashedPassword = await bcrypt.hash(password, generatedSalt);
 
     const result = await client.query(
-      "INSERT INTO users (username, email, hashed_password, salt, organization_code) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      "INSERT INTO users (username, email, hashed_password, salt, organization_code, role_id) VALUES ($1, $2, $3, $4, $5, 3) RETURNING *",
       [displayName, email, hashedPassword, generatedSalt, currOrganization.code]
     );
 
@@ -153,22 +153,14 @@ app.post("/user/register/admin", async function (req, res) {
     const hashedPassword = await bcrypt.hash(password, generatedSalt);
 
     const createUserResult = await client.query(
-      "INSERT INTO users (username, email, hashed_password, salt, organization_code) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      "INSERT INTO users (username, email, hashed_password, salt, organization_code, role_id) VALUES ($1, $2, $3, $4, $5, 1) RETURNING *",
       [displayName, email, hashedPassword, generatedSalt, currOrganization.code]
     );
 
     console.log(createUserResult.rows[0]);
 
-    const assignAdminRoleResult = await client.query(
-      "INSERT INTO organization_roles (user_id, organization_code, role_id) VALUES ($1, $2, $3) RETURNING *",
-      [createUserResult.rows[0].id, currOrganization.code, ROLES.ADMIN]
-    )
-
-    console.log("organization_roles:", assignAdminRoleResult);
-
     res.json({
       user: createUserResult.rows[0],
-      role: assignAdminRoleResult.rows[0],
       message: "User added successfully!",
     });
   } catch (error) {

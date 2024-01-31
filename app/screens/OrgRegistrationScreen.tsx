@@ -47,7 +47,7 @@ const OrgRegistrationScreen = () => {
         createdAt: new Date(apiResponse.created_at),
       });
       
-      navigation.navigate("Registration")
+      navigation.navigate("Registration", { userCreatedOrganization: false })
 
     } catch (error: any) {
       console.log(error);
