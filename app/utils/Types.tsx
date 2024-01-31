@@ -16,6 +16,15 @@ export interface User {
   createdAt?: Date;
 }
 
+export interface PayrollInfo {
+  totalToday: number,
+  totalThisWeek: number,
+  totalThisMonth: number,
+  daysThisWeek: number[],
+  WeeksThisMonth: number[],
+  MonthsThisYear: number[]
+};
+
 export type RootBottomTabParamList = {
   Home: undefined;
   ClockIn: undefined;

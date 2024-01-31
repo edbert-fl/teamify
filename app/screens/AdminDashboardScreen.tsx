@@ -1,9 +1,7 @@
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
-  TouchableOpacity,
   ScrollView,
 } from "react-native";
 import React, { useState } from "react";
@@ -11,6 +9,7 @@ import { theme } from "../utils/Styles";
 import { SpeedDial } from "@rneui/themed";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import WorkStatusCard from "../components/WorkStatusCard";
+import PayrollStatusCard from "../components/PayrollStatusCard";
 
 const AdminDashboardScreen = () => {
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
@@ -19,8 +18,9 @@ const AdminDashboardScreen = () => {
     <View style={styles.container}>
       {/* Cards that show relevant information about the organization */}
       <SafeAreaView style={styles.safeAreaView}>
-        <ScrollView>
+        <ScrollView> 
           <WorkStatusCard/>
+          <PayrollStatusCard/>
         </ScrollView>
       </SafeAreaView>
 
