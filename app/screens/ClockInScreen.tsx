@@ -9,7 +9,7 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { Camera, CameraType } from "expo-camera";
+import { Camera, CameraType, PermissionResponse } from "expo-camera";
 import { theme } from "../utils/Styles";
 import Clock from "../components/Clock";
 import axios from "axios";
@@ -22,7 +22,7 @@ const ClockInScreen = () => {
 
   const cameraRef = useRef(null);
   const [type, setType] = useState(CameraType.front);
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [clockedIn, setClockedIn] = useState(false);
 
@@ -112,7 +112,7 @@ const ClockInScreen = () => {
 
   const requestPermissions = async () => {
     const cameraPermission = await Camera.requestCameraPermissionsAsync();
-    // setHasCameraPermission(cameraPermission.status === "granted");
+    setHasCameraPermission(cameraPermission.status === "granted");
   };
 
   if (hasCameraPermission === null) {
