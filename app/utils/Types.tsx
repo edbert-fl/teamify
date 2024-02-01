@@ -42,6 +42,12 @@ export type RootStackParamList = {
   navigation: StackNavigationProp<RootStackParamList, "AuthApp">;
 };
 
+export type AdminStackParamList = {
+  AdminPanel: undefined,
+  ManageShifts: undefined,
+  navigation: StackNavigationProp<RootStackParamList, "AuthApp">;
+};
+
 export type RootStackNavigationProp = StackNavigationProp<
   RootStackParamList,
   | "Login"

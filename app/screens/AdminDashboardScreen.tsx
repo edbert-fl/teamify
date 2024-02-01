@@ -10,9 +10,17 @@ import { SpeedDial } from "@rneui/themed";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import WorkStatusCard from "../components/WorkStatusCard";
 import PayrollStatusCard from "../components/PayrollStatusCard";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AdminStackParamList } from "../utils/Types";
 
 const AdminDashboardScreen = () => {
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
+  const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
+
+  function navigateToManageShifts(): void {
+    navigation.navigate("ManageShifts");
+  }
 
   return (
     <View style={styles.container}>
@@ -57,7 +65,7 @@ const AdminDashboardScreen = () => {
             />
           }
           title="Manage Shifts"
-          onPress={() => alert("Pressed")}
+          onPress={() => navigateToManageShifts()}
           color={theme.colors.accent}
           titleStyle={{
             borderRadius: 8,

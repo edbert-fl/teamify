@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import AdminDashboardScreen from "../screens/AdminDashboardScreen";
 import ClockInScreen from "../screens/ClockInScreen";
 import HomeScreen from "../screens/HomeScreen";
+import AdminNavigator from "./AdminNavigator";
 
 const Root = () => {
   const Tab = createBottomTabNavigator();
@@ -28,7 +29,7 @@ const Root = () => {
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 28,
       },
-      Organization: {
+      Admin: {
         name: "work",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 28,
@@ -87,8 +88,8 @@ const Root = () => {
         options={{ headerShown: false }}
       />
       <Tab.Screen
-        name="Organization"
-        component={AdminDashboardScreen}
+        name="Admin"
+        component={AdminNavigator}
         options={{ headerShown: false }}
       />
     </Tab.Navigator>
