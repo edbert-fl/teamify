@@ -11,6 +11,7 @@ import { useAppContext } from "../components/AppContext";
 
 const HomeScreen = () => {
   const { setCurrUser } = useAppContext();
+  
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <View style={styles.container}>

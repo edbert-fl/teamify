@@ -16,6 +16,16 @@ export interface User {
   createdAt?: Date;
 }
 
+export interface IconMap {
+  [key: string]: IconInformation;
+}
+
+export interface IconInformation {
+  name: string;
+  color: string;
+  size: number;
+}
+
 export interface PayrollInfo {
   totalToday: number,
   totalThisWeek: number,

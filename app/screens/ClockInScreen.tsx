@@ -25,7 +25,7 @@ const ClockInScreen = () => {
 
   const [type, setType] = useState(CameraType.front);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
-  const [capturedPhoto, setCapturedPhoto] = useState(null);
+  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [clockedIn, setClockedIn] = useState(false);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const ClockInScreen = () => {
 
   const clockIn = async () => {
     const photoUri = await takePicture();
-    const personPresent = await checkIfPersonPresent(photoUri);
+    const personPresent = await checkIfPersonPresent(photoUri as string);
 
     if (personPresent) {
       Alert.alert("Success!", "You've been clocked in.");
@@ -89,8 +89,8 @@ const ClockInScreen = () => {
 
       return response.data.isPersonPresent;
 
-    } catch (error) {
-      console.error("Error:", error.message);
+    } catch (error: unknown) {
+      console.error("Error:", error);
       return false;
     }
   };
@@ -103,7 +103,7 @@ const ClockInScreen = () => {
     };
 
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync(options);
+      const photo = await (cameraRef.current as Camera).takePictureAsync(options);
       setCapturedPhoto(photo.uri);
       return photo.uri;
     } else {
@@ -114,7 +114,7 @@ const ClockInScreen = () => {
 
   const requestPermissions = async () => {
     const cameraPermission = await Camera.requestCameraPermissionsAsync();
-    setHasCameraPermission(cameraPermission.status === "granted");
+    // setHasCameraPermission(cameraPermission.status === "granted");
   };
 
   if (hasCameraPermission === null) {

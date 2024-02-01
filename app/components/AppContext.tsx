@@ -2,10 +2,10 @@ import { Dispatch, SetStateAction, createContext, useContext } from "react";
 import { Organization, User } from "../utils/Types";
 
 interface AppContextProps {
-  currOrganization: Organization;
-  setCurrOrganization: Dispatch<SetStateAction<Organization>>;
-  currUser: User;
-  setCurrUser: Dispatch<SetStateAction<User>>;
+  currOrganization: Organization | null;
+  setCurrOrganization: Dispatch<SetStateAction<Organization | null>>;
+  currUser: User | null;
+  setCurrUser: Dispatch<SetStateAction<User | null>>;
 }
 
 export const AppContext = createContext<AppContextProps | undefined>({

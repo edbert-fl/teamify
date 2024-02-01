@@ -8,12 +8,14 @@ import AdminDashboardScreen from "../screens/AdminDashboardScreen";
 import ClockInScreen from "../screens/ClockInScreen";
 import HomeScreen from "../screens/HomeScreen";
 import AdminNavigator from "./AdminNavigator";
+import { RouteProp, ParamListBase } from "@react-navigation/native";
+import { IconMap } from "../utils/Types";
 
 const Root = () => {
   const Tab = createBottomTabNavigator();
 
-  const tabBarIcon = (focused, route) => {
-    const iconMappings = {
+  const tabBarIcon = (focused: boolean, route: RouteProp<ParamListBase, string>) => {
+    const iconMappings: IconMap= {
       Home: {
         name: "home",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
@@ -41,7 +43,7 @@ const Root = () => {
     return <Icon name={name} color={iconColor} size={size} />;
   };
 
-  const tabBarLabel = (focused, route) => {
+  const tabBarLabel = (focused: boolean, route: RouteProp<ParamListBase, string>) => {
     const textColor = focused ? theme.colors.primary : theme.colors.placeholderText;
 
     return <Text style={{

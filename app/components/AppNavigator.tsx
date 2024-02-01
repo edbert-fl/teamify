@@ -8,11 +8,14 @@ import OrgSelectionScreen from "../screens/OrgSelectionScreen";
 import { useAppContext } from "./AppContext";
 import ClockInScreen from "../screens/ClockInScreen";
 import AuthAppNavigator from "./AuthAppNavigator";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   const { currUser } = useAppContext();
+
+  const RegistrationScreenFC = () => <RegistrationScreen route={useRoute()} navigation={useNavigation()}/>
 
   return (
     <Stack.Navigator initialRouteName="AuthApp">
@@ -30,13 +33,8 @@ const AppNavigator = () => {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="SignUp"
-            component={RegistrationScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
             name="Registration"
-            component={RegistrationScreen}
+            component={RegistrationScreenFC}
             options={{ headerShown: false }}
           />
           <Stack.Screen

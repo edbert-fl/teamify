@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { theme } from "../utils/Styles";
 import axios from "axios";
 import { RouteProp,  } from "@react-navigation/native";
-import { RootStackNavigationProp, RootStackParamList, RootStackRouteProp } from "../utils/Types";
+import { Organization, RootStackNavigationProp, RootStackParamList, RootStackRouteProp } from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 
 import { SERVER_URL } from "../utils/ServerAddress";
@@ -55,7 +55,9 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
           currOrganization: currOrganization,
         });
 
-        console.log("User has been made admin of ", currOrganization.name);
+        if (currOrganization !== null) {
+          console.log("User has been made admin of ", (currOrganization as Organization).name);
+        }
       } else {
         // Post request to server to create user as a normal user.
         response = await axios.post(`${SERVER_URL}/user/register`, {
