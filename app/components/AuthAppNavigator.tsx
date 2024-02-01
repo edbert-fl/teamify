@@ -4,7 +4,6 @@ import {Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { theme } from "../utils/Styles";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import AdminDashboardScreen from "../screens/AdminDashboardScreen";
 import ClockInScreen from "../screens/ClockInScreen";
 import HomeScreen from "../screens/HomeScreen";
 import AdminNavigator from "./AdminNavigator";

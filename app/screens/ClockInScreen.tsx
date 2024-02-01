@@ -11,18 +11,16 @@ import {
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import { theme } from "../utils/Styles";
-import { useAppContext } from "../components/AppContext";
 import Clock from "../components/Clock";
 import axios from "axios";
 import FormData from 'form-data';
 
 import { SERVER_URL } from "../utils/ServerAddress";
+import ErrorScreen from "./ErrorScreen";
 
 const ClockInScreen = () => {
-  const { setCurrUser } = useAppContext();
 
   const cameraRef = useRef(null);
-
   const [type, setType] = useState(CameraType.front);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
@@ -118,9 +116,9 @@ const ClockInScreen = () => {
   };
 
   if (hasCameraPermission === null) {
-    return <View />;
+    return <ErrorScreen errorMessage="Camera permission not granted"/>;
   } else if (!hasCameraPermission) {
-    return <Text>No access to camera</Text>;
+    return <ErrorScreen errorMessage="No access to camera"/>;
   }
 
   return (
