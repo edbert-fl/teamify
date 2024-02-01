@@ -39,15 +39,9 @@ const WorkStatusCard = () => {
         <Text style={styles.warningText}>Nobody has clocked in yet...</Text>
       ) : (
         users.map((u, i) => {
-          const hoursLate = Math.floor(u.late / 60);
-          const minsLate = Math.floor(u.late % 60);
-
-          const hoursOvertime = Math.floor(u.overtime / 60);
-          const minsOvertime = Math.floor(u.overtime % 60);
-
           return (
-            <View>
-              <View key={i} style={styles.tableRow}>
+            <View key={i}>
+              <View style={styles.tableRow}>
                 <Text style={[styles.dataHeader, styles.labelCell]}>
                   {u.name}
                 </Text>
