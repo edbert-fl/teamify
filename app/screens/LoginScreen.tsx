@@ -84,7 +84,7 @@ const LoginScreen = () => {
           autoCapitalize="none"
           secureTextEntry={true}
           onChangeText={(text) => setPassword(text)}
-          enablesReturnKeyAutomatically={true}
+          enablesReturnKeyAutomatically
         />
 
         {loading ? (

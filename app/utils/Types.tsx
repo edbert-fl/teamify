@@ -1,5 +1,6 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Dispatch, SetStateAction } from "react";
 
 export interface Organization {
   code: string;
@@ -35,6 +36,16 @@ export interface PayrollInfo {
   MonthsThisYear: number[]
 };
 
+export interface SelectedDaysOfTheWeek {
+  "monday": boolean,
+  "tuesday": boolean,
+  "wednesday": boolean,
+  "thursday": boolean,
+  "friday": boolean,
+  "saturday": boolean,
+  "sunday": boolean
+}
+
 export type RootBottomTabParamList = {
   Home: undefined;
   ClockIn: undefined;
@@ -55,6 +66,7 @@ export type RootStackParamList = {
 export type AdminStackParamList = {
   AdminPanel: undefined,
   ManageShifts: undefined,
+  RepeatDays: undefined,
   navigation: StackNavigationProp<RootStackParamList, "AuthApp">;
 };
 

@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { Card, Tab, TabView } from "@rneui/themed";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import { theme } from "../utils/Styles";
 import ChartByWeek from "./ChartByWeek";
 import ChartByMonth from "./ChartByMonth";
