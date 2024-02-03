@@ -111,4 +111,66 @@ EXPO_PUBLIC_IOS_SERVER_URL=<your_computers_ip_address>
 
 Then run `npm start` to run the project and scan the QR code to load it on your iOS or Android device with Expo!
 
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Usage
+
+### User Authentication
+
+<p align="center">
+  <img src="https://github.com/edbert-fl/teamify/assets/102503467/57ac46ff-dd67-4608-8a30-acb90c030e48" hspace="10" alt="Sign Up GIF" align="center" width="200" />
+</p>
+
+Users of the app are able to create new organizations easily when signing up. Then once the organizatino is created they can sign up for a personal account that is immediately made into the admin of their created organization. As an admin they are able to receive their organization's randomly generated 6 digit alphanumeric organization code on their personal Home page which can then be shared to other employees to create their own accounts which will immediately be registered as part of the parent organization.
+
+```typescript
+const signUp = async () => {
+    setLoading(true);
+    try {
+      // Generate a random alphanumeric code of 6 digits
+      const generatedCode = Math.random()
+        .toString(36)
+        .substr(2, 6)
+        .toUpperCase();
+
+      if (organizationName && generatedCode) {
+        // Save organization information to be added to database after owner account is created
+        setCurrOrganization({
+          code: generatedCode,
+          name: organizationName,
+        });
+
+        // Sends call to API endpoint with the generated organization code and name to update the database
+        const response = await axios.post(`${SERVER_URL}/organization/add`, {
+          code: generatedCode,
+          name: organizationName,
+        });
+
+        // Navigate to the Registration page
+        navigation.navigate('Registration', { userCreatedOrganization: true });
+      } else {
+        throw new Error("Organization name or code is undefined.");
+      }
+    } catch (error: any) {
+      console.log(error);
+      alert("Sign up failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Admin Dashboard
+
+<p align="center">
+  <img src="https://github.com/edbert-fl/teamify/assets/102503467/397a5769-68ec-41cf-bb7d-a9e861e1464f" hspace="10" alt="Manage Shifts GIF" align="center" width="250" />
+</p>
+
+Admins have access to the Organization tab which is an admin dashboard that displays different relevant statistics of the whole organization. From here they are also able to manage shifts for their employees. They can choose whether to create a shift for a particular day, or have a repeating shift that occurs every week at the same time. 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
