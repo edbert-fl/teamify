@@ -13,10 +13,15 @@ import AppHeader from "../components/AppHeader";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { AdminStackParamList, User } from "../utils/Types";
+import {
+  AdminStackParamList,
+  SelectedDaysOfTheWeek,
+  User,
+} from "../utils/Types";
 import RNDateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { useAdminContext } from "../components/AdminContext";
 
 interface ManageShiftsScreenProps {}
 
@@ -31,12 +36,14 @@ interface ShiftsFormInput {
 }
 
 const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
+  const { selectedDays } = useAdminContext();
+
   const [users, setUsers] = useState<User[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedShiftStart, setSelectedShiftStart] = useState<Date>(
     new Date()
   );
-  const [isRepeatingShift, setIsRepeatingShift] = useState(true);
+  const [isRepeatingShift, setIsRepeatingShift] = useState(false);
   const [selectedShiftEnd, setSelectedShiftEnd] = useState<Date>(new Date());
 
   const {
@@ -100,6 +107,41 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
     }
   };
 
+  const generateDaysDescription = (selectedDays: SelectedDaysOfTheWeek) => {
+    let selectedDaysArray: string[] = [];
+
+    if (selectedDays.monday) selectedDaysArray.push("Mon");
+    if (selectedDays.tuesday) selectedDaysArray.push("Tue");
+    if (selectedDays.wednesday) selectedDaysArray.push("Wed");
+    if (selectedDays.thursday) selectedDaysArray.push("Thu");
+    if (selectedDays.friday) selectedDaysArray.push("Fri");
+    if (selectedDays.saturday) selectedDaysArray.push("Sat");
+    if (selectedDays.sunday) selectedDaysArray.push("Sun");
+
+    if (selectedDaysArray.length === 7) {
+      return "Everyday";
+    } else if (
+      selectedDaysArray.length === 5 &&
+      !selectedDaysArray.includes("Sat") &&
+      !selectedDaysArray.includes("Sun")
+    ) {
+      return "Every Weekday";
+    } else if (
+      selectedDaysArray.length === 2 &&
+      selectedDays.saturday &&
+      selectedDays.sunday
+    ) {
+      return "Every Weekend";
+    } else if (
+      selectedDaysArray.length === 0
+    ) {
+      return "Never"
+    }
+
+    let result: string = selectedDaysArray.join(", ");
+    return result;
+  };
+
   const onSubmit = (data: ShiftsFormInput) => {
     console.log(selectedDate);
     console.log(selectedShiftStart);
@@ -132,7 +174,6 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
                 false: theme.colors.surface,
                 true: theme.colors.primary,
               }}
-              thumbColor={isRepeatingShift ? "#f5dd4b" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={setIsRepeatingShift}
               value={isRepeatingShift}
@@ -143,13 +184,15 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
 
           {isRepeatingShift ? (
             <View style={styles.formInputContainer}>
-              <Text style={styles.formLabel}>Repeating Shift On</Text>
+              <Text style={styles.formLabel}>Repeats</Text>
               <TouchableOpacity
-            style={styles.button}
-            onPress={navigateToDaysPicker}
-          >
-            <Text style={styles.buttonText}>Submit</Text>
-          </TouchableOpacity>
+                style={styles.editDaysButton}
+                onPress={navigateToDaysPicker}
+              >
+                <Text style={styles.editDaysText}>
+                  {generateDaysDescription(selectedDays)}
+                </Text>
+              </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.formInputContainer}>
@@ -248,6 +291,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 15,
+    height: 40
   },
   dateTimePickerContainer: {
     width: 150,
@@ -259,6 +303,17 @@ const styles = StyleSheet.create({
   formLabel: {
     color: theme.colors.primaryText,
     fontSize: 18,
+  },
+  editDaysButton: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: 9,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: "center",
+  },
+  editDaysText: {
+    fontSize: 16,
+    color: theme.colors.primaryText,
   },
 });
 

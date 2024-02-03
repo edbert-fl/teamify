@@ -72,6 +72,7 @@ const Root = () => {
         },
         tabBarLabel: ({ focused }) => tabBarLabel(focused, route)
       })}
+      initialRouteName="ClockIn"
     >
       <Tab.Screen
         name="Home"
