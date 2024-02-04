@@ -22,6 +22,7 @@ import RNDateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { useAdminContext } from "../components/AdminContext";
+import SelectEmployeesScreen from "./SelectEmployeesScreen";
 
 interface ManageShiftsScreenProps {}
 
@@ -36,9 +37,8 @@ interface ShiftsFormInput {
 }
 
 const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
-  const { selectedDays } = useAdminContext();
+  const { selectedDays, selectedUsers } = useAdminContext();
 
-  const [users, setUsers] = useState<User[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedShiftStart, setSelectedShiftStart] = useState<Date>(
     new Date()
@@ -47,47 +47,10 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   const [selectedShiftEnd, setSelectedShiftEnd] = useState<Date>(new Date());
 
   const {
-    control,
     handleSubmit,
-    getValues,
-    setValue,
     formState: { errors },
   } = useForm<ShiftsFormInput>();
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
-
-  // Fetch users from the database
-  const getUsersFromDatabase = async () => {
-    // Mock data for demonstration purposes
-    const mockData: User[] = [
-      {
-        id: 1,
-        username: "Alice",
-        email: "alice@gmail.com",
-        salt: "abcdefg",
-        organizationCode: "AAAAAA",
-      },
-      {
-        id: 2,
-        username: "Bob",
-        email: "bob@gmail.com",
-        salt: "hijklmnop",
-        organizationCode: "AAAAAA",
-      },
-      {
-        id: 3,
-        username: "Charlie",
-        email: "charlie@gmail.com",
-        salt: "qrstuvwxyz",
-        organizationCode: "AAAAAA",
-      },
-    ];
-
-    setUsers(mockData);
-  };
-
-  useEffect(() => {
-    getUsersFromDatabase();
-  }, []);
 
   const handleDateChange = (event: DateTimePickerEvent, date?: Date) => {
     if (date) {
@@ -132,14 +95,28 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
       selectedDays.sunday
     ) {
       return "Every Weekend";
-    } else if (
-      selectedDaysArray.length === 0
-    ) {
-      return "Never"
+    } else if (selectedDaysArray.length === 0) {
+      return "Never";
     }
 
     let result: string = selectedDaysArray.join(", ");
     return result;
+  };
+
+  const generateUsersDescription = (selectedUsers: User[]) => {
+    if (selectedUsers === null || selectedUsers.length === 0) {
+      return `Nobody`;
+    } else if (selectedUsers.length > 2) {
+      return `${selectedUsers.length} Employees`;
+    } else {
+      let usernames: string[] = [];
+
+      selectedUsers.map((user) => {
+        usernames.push(user.username);
+      });
+
+      return `${usernames.join(" and ")}`;
+    }
   };
 
   const onSubmit = (data: ShiftsFormInput) => {
@@ -150,6 +127,10 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
 
   const navigateToDaysPicker = () => {
     navigation.navigate("RepeatDays");
+  };
+
+  const navigateToSelectEmployees = () => {
+    navigation.navigate("SelectEmployees");
   };
 
   return (
@@ -241,6 +222,19 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
             </View>
           </View>
 
+          {/* Assign shift to */}
+          <View style={styles.formInputContainer}>
+            <Text style={styles.formLabel}>Assigned To</Text>
+            <TouchableOpacity
+              style={styles.editDaysButton}
+              onPress={navigateToSelectEmployees}
+            >
+              <Text style={styles.editDaysText}>
+                {generateUsersDescription(selectedUsers)}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Submit Button */}
           <TouchableOpacity
             style={styles.button}
@@ -291,7 +285,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 15,
-    height: 40
+    height: 40,
   },
   dateTimePickerContainer: {
     width: 150,

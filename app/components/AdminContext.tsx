@@ -4,6 +4,8 @@ import { Organization, SelectedDaysOfTheWeek, User } from "../utils/Types";
 interface AdminContextProps {
   selectedDays: SelectedDaysOfTheWeek;
   setSelectedDays: Dispatch<SetStateAction<SelectedDaysOfTheWeek>>;
+  selectedUsers: User[],
+  setSelectedUsers: Dispatch<SetStateAction<User[]>>; 
 }
 
 export const AdminContext = createContext<AdminContextProps | undefined>({
@@ -17,6 +19,8 @@ export const AdminContext = createContext<AdminContextProps | undefined>({
     sunday: false,
   },
   setSelectedDays: () => {},
+  selectedUsers: [],
+  setSelectedUsers: () => {},
 });
 
 export const useAdminContext = () => {

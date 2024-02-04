@@ -6,6 +6,8 @@ import ManageShiftsScreen from "../screens/ManageShiftsScreen";
 import RepeatDaysScreen from "../screens/RepeatDaysScreen";
 import { useRoute } from "@react-navigation/native";
 import { AdminContext } from "./AdminContext";
+import { User } from "../utils/Types";
+import SelectEmployeesScreen from "../screens/SelectEmployeesScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,12 +22,15 @@ const AppNavigator = () => {
     saturday: false,
     sunday: false,
   });
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
 
   return (
     <AdminContext.Provider
       value={{
         selectedDays,
         setSelectedDays,
+        selectedUsers,
+        setSelectedUsers
       }}
     >
       <Stack.Navigator initialRouteName="AdminPanel">
@@ -42,6 +47,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="RepeatDays"
           component={RepeatDaysScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SelectEmployees"
+          component={SelectEmployeesScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
