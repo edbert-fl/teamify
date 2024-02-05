@@ -174,14 +174,18 @@ const showFirst5Rows = async () => {
   const client = await pool.connect();
 
   try {
+    const result = await client.query(`SELECT user_id, username, email, organization_code, created_at, role_id FROM users LIMIT 5;`);
+    console.log(`First 5 rows of users:`);
+    console.table(result.rows)
+
     const tables = [
       "organization",
-      "users",
       "roles",
       "shifts",
       "shift_days",
       "assigned_shifts",
     ];
+
     for (const table of tables) {
       const result = await client.query(`SELECT * FROM ${table} LIMIT 5;`);
       console.log(`First 5 rows of ${table}:`);
