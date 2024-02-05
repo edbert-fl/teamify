@@ -61,10 +61,14 @@ module.exports.initializeRoutes = (app) => {
     try {
       client = await pool.connect();
 
+      console.log(organizationCode)
+
       const result = await client.query(
         "SELECT * FROM organization WHERE organization_code = $1 LIMIT 1",
         [organizationCode]
       );
+
+      console.log(result.rows);
 
       if (result.rows.length > 0) {
         // Return the first (and only) row as JSON response
@@ -74,6 +78,7 @@ module.exports.initializeRoutes = (app) => {
           organization: result.rows[0],
         });
       } else {
+        console.log("No organization found with the specified code")
         res.status(404).json({
           error: "Organization Not Found",
           message: "No organization found with the specified code.",
@@ -111,7 +116,7 @@ module.exports.initializeRoutes = (app) => {
           email,
           hashedPassword,
           generatedSalt,
-          currOrganization.code,
+          currOrganization.organizationCode,
           ROLES.USER,
         ]
       );
@@ -154,7 +159,7 @@ module.exports.initializeRoutes = (app) => {
           email,
           hashedPassword,
           generatedSalt,
-          currOrganization.code,
+          currOrganization.organizationCode,
           ROLES.ADMIN,
         ]
       );
@@ -162,7 +167,7 @@ module.exports.initializeRoutes = (app) => {
       const createUserResultData = createUserResult.rows[0];
 
       res.json({
-        user: createuserResultData,
+        user: createUserResultData,
         message: "User added successfully!",
       });
     } catch (error) {
@@ -206,7 +211,7 @@ module.exports.initializeRoutes = (app) => {
         // Compare the typed password and the stored hash password from the database
         if (hashedInputPassword === storedHashedPassword) {
           const organizationResult = await client.query(
-            "SELECT * FROM organization WHERE organization_code = $1",
+            "SELECT * FROM organization WHERE organization_code = $1 LIMIT 1",
             [userResultData.organization_code]
           );
 
@@ -238,7 +243,7 @@ module.exports.initializeRoutes = (app) => {
   /* 
   Get a list of all users from an organization
   */
-  app.post("/user/get", async function (req, res) {
+  app.post("/users/get", async function (req, res) {
     const { currOrganization } = req.body;
 
     try {
@@ -247,10 +252,12 @@ module.exports.initializeRoutes = (app) => {
       // Retrieve all users with the same organization_code
       const userResult = await client.query(
         "SELECT * FROM users WHERE organization_code = $1",
-        [currOrganization.code]
+        [currOrganization.organizationCode]
       );
 
       const listOfUsers = userResult.rows;
+
+      console.log(listOfUsers)
 
       if (listOfUsers.length === 0) {
         const errorMessage = "No such organization exists!";
@@ -367,7 +374,7 @@ module.exports.initializeRoutes = (app) => {
         "INSERT INTO shifts (organization_code, creator_id, start_time, end_time, repeating_shift, shift_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
         [
           currOrganization.organizationCode,
-          currUser.id,
+          currUser.user_id,
           startTimeString,
           endTimeString,
           newShift.repeating,
@@ -400,7 +407,7 @@ module.exports.initializeRoutes = (app) => {
       for (user of newShift.selectedUsers) {
         const assignShiftInput = await client.query(
           "INSERT INTO assigned_shifts (user_id, shift_id) VALUES ($1, $2) RETURNING *",
-          [user.id, shiftInputResultData.shift_id]
+          [user.user_id, shiftInputResultData.shift_id]
         );
 
         const assignShiftInputData = assignShiftInput.rows[0];

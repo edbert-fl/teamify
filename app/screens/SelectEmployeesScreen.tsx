@@ -31,11 +31,13 @@ const SelectEmployeesScreen = () => {
         currOrganization: currOrganization
       });
 
-    console.log(response)
+      console.log(response.data.users)
+
+    setUsers(response.data.users);
   };
 
   const findSelectedUser = (userToCheck: User) => {
-    return selectedUsers.findIndex((user) => user.id === userToCheck.id);
+    return selectedUsers.findIndex((user) => user.user_id === userToCheck.user_id);
   };
 
   useEffect(() => {
@@ -75,7 +77,7 @@ const SelectEmployeesScreen = () => {
             <TouchableOpacity
               style={styles.selectUserButton}
               onPress={() => toggleUser(user)}
-              key={user.id}
+              key={user.user_id}
             >
               <View style={styles.selectUserContainer}>
                 <Text style={styles.text}>{user.username}</Text>

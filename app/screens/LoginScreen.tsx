@@ -43,7 +43,7 @@ const LoginScreen = () => {
       const userData = response.data.user;
       // Sets the user to be the currently logged in user.
       setCurrUser({
-        id: userData.id,
+        user_id: userData.id,
         username: userData.username,
         email: userData.email,
         salt: userData.salt,

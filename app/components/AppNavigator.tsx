@@ -13,13 +13,13 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const { currUser } = useAppContext();
+  const { currUser, currOrganization } = useAppContext();
 
   const RegistrationScreenFC = () => <RegistrationScreen route={useRoute()} navigation={useNavigation()}/>
 
   return (
     <Stack.Navigator initialRouteName="AuthApp">
-      {currUser ? (
+      {currUser && currOrganization ? (
         <Stack.Screen
           name="AuthApp"
           component={AuthAppNavigator}

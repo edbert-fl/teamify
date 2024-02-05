@@ -34,6 +34,9 @@ const OrgRegistrationScreen = () => {
 
   const signUp = async () => {
     setLoading(true);
+
+    console.log(organizationCode)
+
     try {
       const response = await axios.post(`${SERVER_URL}/organization/login`, {
         organizationCode: organizationCode,

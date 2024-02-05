@@ -69,7 +69,7 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
         const apiResponseData = response.data.user;
         // Sets the user to be the currently logged in user.
         setCurrUser({
-          id: apiResponseData.id,
+          user_id: apiResponseData.id,
           username: apiResponseData.username,
           email: apiResponseData.email,
           salt: apiResponseData.salt,

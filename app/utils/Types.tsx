@@ -7,7 +7,7 @@ export interface Organization {
 }
 
 export interface User {
-  id: number;
+  user_id: number;
   username: string;
   email: string;
   salt: string;
