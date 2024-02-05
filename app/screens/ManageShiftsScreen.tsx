@@ -7,6 +7,7 @@ import {
   Switch,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
 import { theme } from "../utils/Styles";
 import AppHeader from "../components/AppHeader";
@@ -22,7 +23,6 @@ import { useAdminContext } from "../components/AdminContext";
 import axios from "axios";
 import { SERVER_URL } from "../utils/ServerAddress";
 import { useAppContext } from "../components/AppContext";
-import { ReloadInstructions } from "react-native/Libraries/NewAppScreen";
 import DateTimePicker from "../components/DateTimePicker";
 import TimePicker from "../components/TimePicker";
 
@@ -99,6 +99,20 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   };
 
   const handleSubmit = async () => {
+    if (
+      isRepeatingShift &&
+      Object.values(selectedDays).every((day) => day === false)
+    ) {
+      Alert.alert(
+        "Incomplete Shift Configuration",
+        "Please make sure to specify at least one day for the shift.",
+        [
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ]
+      );
+      return;
+    }
+
     let newShift: Shift;
     if (isRepeatingShift) {
       newShift = {
@@ -187,7 +201,10 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
           {/* Shift Start*/}
           <View style={styles.formInputContainer}>
             <Text style={styles.formLabel}>Shift Start</Text>
-              <TimePicker time={selectedShiftStart} setTime={setSelectedShiftStart} />
+            <TimePicker
+              time={selectedShiftStart}
+              setTime={setSelectedShiftStart}
+            />
           </View>
 
           {/* Shift End*/}

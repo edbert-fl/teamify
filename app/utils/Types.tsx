@@ -1,5 +1,16 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
+export const userRoles: UserRoles = {
+  1: "Admin",
+  2: "Manager",
+  3: "User"
+};
+
+interface UserRoles {
+  [key: number]: string;
+}
+
 export interface Organization {
   organizationCode: string;
   organizationName: string;
@@ -12,6 +23,8 @@ export interface User {
   email: string;
   salt: string;
   organizationCode: string;
+  rate: number;
+  role_id: number;
   createdAt?: Date;
 }
 

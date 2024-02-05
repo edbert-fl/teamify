@@ -19,7 +19,6 @@ import { useAppContext } from "../components/AppContext";
 import { SERVER_URL } from "../utils/ServerAddress"
 
 const OrgRegistrationScreen = () => {
-
   const { currOrganization, setCurrOrganization } = useAppContext();
 
   const [organizationCode, setOrganizationCode] = useState("");

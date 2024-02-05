@@ -48,6 +48,8 @@ const LoginScreen = () => {
         email: userData.email,
         salt: userData.salt,
         organizationCode: userData.organizationCode,
+        role_id: userData.role_id,
+        rate: userData.rate | 0,
         createdAt: new Date(userData.created_at),
       });
 

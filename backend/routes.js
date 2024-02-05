@@ -251,7 +251,7 @@ module.exports.initializeRoutes = (app) => {
 
       // Retrieve all users with the same organization_code
       const userResult = await client.query(
-        "SELECT * FROM users WHERE organization_code = $1",
+        "SELECT * FROM users WHERE organization_code = $1 ORDER BY role_id",
         [currOrganization.organizationCode]
       );
 

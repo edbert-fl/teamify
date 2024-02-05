@@ -66,15 +66,17 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
       }
 
       if (response.data.user) {
-        const apiResponseData = response.data.user;
+        const userData = response.data.user;
         // Sets the user to be the currently logged in user.
         setCurrUser({
-          user_id: apiResponseData.id,
-          username: apiResponseData.username,
-          email: apiResponseData.email,
-          salt: apiResponseData.salt,
-          organizationCode: apiResponseData.organizationCode,
-          createdAt: new Date(apiResponseData.created_at),
+          user_id: userData.id,
+          username: userData.username,
+          email: userData.email,
+          salt: userData.salt,
+          organizationCode: userData.organizationCode,
+          role_id: userData.role_id,
+          rate: userData.rate | 0,
+          createdAt: new Date(userData.created_at),
         });
       }
     } catch (error: any) {
