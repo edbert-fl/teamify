@@ -31,8 +31,8 @@ Runs on both iOS and Android
 ### 👩‍💼 Admin Features:
 - Admin Dashboard
     - Organization data overview
-    - (Under Development) Custom roles and user management
-    - (Under Development) Rate setting for all users
+    - (Under Development) Intuitive roles and user management
+    - (Under Development) Setting pay for all users
 
 ### 🔄 Organization Management:
 - Admins can create organizations
