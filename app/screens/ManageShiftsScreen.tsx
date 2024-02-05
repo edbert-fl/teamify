@@ -23,6 +23,9 @@ import RNDateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { useAdminContext } from "../components/AdminContext";
 import SelectEmployeesScreen from "./SelectEmployeesScreen";
+import axios from "axios";
+import { SERVER_URL } from "../utils/ServerAddress";
+import { useAppContext } from "../components/AppContext";
 
 interface ManageShiftsScreenProps {}
 
@@ -38,6 +41,7 @@ interface Shift {
 
 const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   const { selectedDays, selectedUsers } = useAdminContext();
+  const { currOrganization, currUser } = useAppContext();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedShiftStart, setSelectedShiftStart] = useState<Date>(
@@ -114,16 +118,33 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
     }
   };
 
-  const handleSubmit = () => {
-    const newShift: Shift = {
-      selectedDate: selectedDate,
-      selectedDays: selectedDays,
-      startTime: selectedShiftStart,
-      endTime: selectedShiftEnd,
-      repeating: isRepeatingShift,
-      selectedUsers: selectedUsers
+  const handleSubmit = async () => {
+    let newShift: Shift;
+    if (isRepeatingShift) {
+      newShift = {
+        selectedDate: undefined,
+        selectedDays: selectedDays,
+        startTime: selectedShiftStart,
+        endTime: selectedShiftEnd,
+        repeating: isRepeatingShift,
+        selectedUsers: selectedUsers
+      }
+    } else {
+      newShift = {
+        selectedDate: selectedDate,
+        selectedDays: undefined,
+        startTime: selectedShiftStart,
+        endTime: selectedShiftEnd,
+        repeating: isRepeatingShift,
+        selectedUsers: selectedUsers
+      }
     }
 
+    const response = await axios.post(`${SERVER_URL}/shift/add`, {
+      newShift: newShift,
+      currOrganization: currOrganization,
+      currUser: currUser,
+    });
     console.log(newShift);
   };
 

@@ -16,8 +16,8 @@ const upload = multer({ storage: storage });
 const ROLES = {
   ADMIN: 1,
   MANAGER: 2,
-  USER: 3
-}
+  USER: 3,
+};
 
 app.use(cors());
 app.use(express.json());
@@ -185,9 +185,10 @@ app.post("/user/login", async function (req, res) {
     const client = await pool.connect();
 
     // Retrieve hashed password and salt from the database for the specified email
-    const result = await client.query("SELECT hashed_password, salt FROM users WHERE email = $1", [
-      email,
-    ]);
+    const result = await client.query(
+      "SELECT hashed_password, salt FROM users WHERE email = $1",
+      [email]
+    );
 
     if (result.rows.length === 1) {
       const storedHashedPassword = result.rows[0].hashed_password;
@@ -254,7 +255,7 @@ app.post("/organization/add", async function (req, res) {
   Endpoint to verify if an image contains a person.
   Expects a POST request with a single 'image' file.
 */
-app.post("/verify/person", upload.single('image'), async (req, res) => {
+app.post("/verify/person", upload.single("image"), async (req, res) => {
   // Extract the file from the request
   const file = req.file;
 
@@ -282,6 +283,115 @@ app.post("/verify/person", upload.single('image'), async (req, res) => {
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
+  }
+});
+
+/* 
+Add a new shift
+*/
+app.post("/shift/add", async function (req, res) {
+  const { newShift, currOrganization, currUser } = req.body;
+
+  // Data validation
+  if (newShift.selectedDate === null && repeating === false) {
+    console.error("Error creating shift", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: "Selected date is null when shift is not repeating!",
+    });
+  } else if (newShift.selectedDays === null && repeating === true) {
+    console.error("Error creating shift", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: "Selected days is null when shift is repeating!",
+    });
+  } else if (
+    newShift.selectedUsers === null ||
+    newShift.selectedUsers.length === 0
+  ) {
+    console.error("Error creating shift", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: "Shift is not assigned to anyone!",
+    });
+  }
+
+  console.log(newShift);
+
+  try {
+    client = await pool.connect();
+    // Creating the shift instance
+    const startTimeString = new Date(newShift.startTime)
+      .toISOString()
+      .split("T")[1]
+      .substring(0, 8);
+    const endTimeString = new Date(newShift.endTime)
+      .toISOString()
+      .split("T")[1]
+      .substring(0, 8);
+
+    let dateString = null;
+    if (!newShift.repeating) {
+      dateString = new Date(newShift.selectedDate).toISOString().split("T")[0];
+    }
+
+    const shiftInputResult = await client.query(
+      "INSERT INTO shifts (organization_code, creator_id, start_time, end_time, repeating_shift, shift_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [
+        currOrganization.organizationCode,
+        currUser.id,
+        startTimeString,
+        endTimeString,
+        newShift.repeating,
+        dateString,
+      ]
+    );
+
+    const shiftInputResultData = shiftInputResult.rows[0];
+    console.log("Shift Input Data:", shiftInputResultData);
+
+    // Add the days that are repeating whenever there is a repeating shift
+    console.log(newShift.selectedDays);
+    if (newShift.repeating) {
+      const daysOfWeek = Object.keys(newShift.selectedDays);
+
+      for (day of daysOfWeek) {
+        if (newShift.selectedDays[day] === true) {
+          const shiftDaysInput = await client.query(
+            "INSERT INTO shift_days (shift_id, day_of_week) VALUES ($1, $2) RETURNING *",
+            [shiftInputResultData.shift_id, day]
+          );
+
+          const shiftDaysInputData = shiftDaysInput.rows[0];
+          console.log("Shift Days Input Data:", shiftDaysInputData);
+        }
+      }
+    }
+
+    // Assign the shift to the assignees
+    for (user of newShift.selectedUsers) {
+      const assignShiftInput = await client.query(
+        "INSERT INTO assigned_shifts (user_id, shift_id) VALUES ($1, $2) RETURNING *",
+        [user.id, shiftInputResultData.shift_id]
+      );
+
+      const assignShiftInputData = assignShiftInput.rows[0];
+      console.log("Assign Shift Input Data:", assignShiftInputData);
+    }
+
+    res.json({
+      shift: shiftInputResultData,
+      message: "Shift added successfully!",
+    });
+  } catch (error) {
+    console.error("Error adding shift", error);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 });
 

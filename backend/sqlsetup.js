@@ -70,6 +70,8 @@ const setupDatabase = async () => {
     await client.query(`
       CREATE TABLE IF NOT EXISTS shifts (
         shift_id SERIAL PRIMARY KEY,
+        organization_code VARCHAR(6) REFERENCES organization(organization_code),
+        creator_id INTEGER REFERENCES users(user_id),
         start_time TIME,
         end_time TIME,
         repeating_shift BOOLEAN,
@@ -176,7 +178,6 @@ const showFirst5Rows = async () => {
       "organization",
       "users",
       "roles",
-      "organization_roles",
       "shifts",
       "shift_days",
       "assigned_shifts",

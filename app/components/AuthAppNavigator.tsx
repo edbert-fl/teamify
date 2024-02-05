@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import {Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -9,9 +9,11 @@ import HomeScreen from "../screens/HomeScreen";
 import AdminNavigator from "./AdminNavigator";
 import { RouteProp, ParamListBase } from "@react-navigation/native";
 import { IconMap } from "../utils/Types";
+import { useAppContext } from "./AppContext";
 
-const Root = () => {
+const AuthAppNavigator = () => {
   const Tab = createBottomTabNavigator();
+  const { currUser } = useAppContext();
 
   const tabBarIcon = (focused: boolean, route: RouteProp<ParamListBase, string>) => {
     const iconMappings: IconMap= {
@@ -88,7 +90,7 @@ const Root = () => {
         name="Calendar"
         component={HomeScreen}
         options={{ headerShown: false }}
-      />
+      /> 
       <Tab.Screen
         name="Admin"
         component={AdminNavigator}
@@ -98,4 +100,4 @@ const Root = () => {
   );
 };
 
-export default Root;
+export default AuthAppNavigator;
