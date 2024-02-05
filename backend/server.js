@@ -157,10 +157,10 @@ app.post("/user/register/admin", async function (req, res) {
       [displayName, email, hashedPassword, generatedSalt, currOrganization.code]
     );
 
-    console.log(createUserResult.rows[0]);
+    console.log(createuserResultData);
 
     res.json({
-      user: createUserResult.rows[0],
+      user: createuserResultData,
       message: "User added successfully!",
     });
   } catch (error) {
@@ -185,22 +185,34 @@ app.post("/user/login", async function (req, res) {
     const client = await pool.connect();
 
     // Retrieve hashed password and salt from the database for the specified email
-    const result = await client.query(
-      "SELECT hashed_password, salt FROM users WHERE email = $1",
+    const userResult = await client.query(
+      "SELECT organization_code, hashed_password, salt FROM users WHERE email = $1",
       [email]
     );
 
-    if (result.rows.length === 1) {
-      const storedHashedPassword = result.rows[0].hashed_password;
-      const salt = result.rows[0].salt;
+    const userResultData = userResult.rows[0];
+
+    if (userResult.rows.length === 1) {
+      const storedHashedPassword = userResultData.hashed_password;
+      const salt = userResultData.salt;
 
       // Use the retrieved salt to hash the user's typed password
       const hashedInputPassword = await bcrypt.hash(password, salt);
 
+      console.log(userResultData)
+
       // Compare the typed password and the stored hash password from the database
       if (hashedInputPassword === storedHashedPassword) {
+        const organizationResult = await client.query(
+          "SELECT * FROM organization WHERE organization_code = $1",
+          [userResultData.organization_code]
+        );
+
+        console.log(organizationResult.rows[0]);
+
         res.json({
-          user: result.rows[0],
+          user: userResultData,
+          organization: organizationResult.rows[0],
           message: "Authentication successful!",
         });
       } else {
@@ -292,27 +304,33 @@ Add a new shift
 app.post("/shift/add", async function (req, res) {
   const { newShift, currOrganization, currUser } = req.body;
 
+  console.log(currOrganization);
+  console.log(currUser);
+
   // Data validation
   if (newShift.selectedDate === null && repeating === false) {
-    console.error("Error creating shift", error);
+    const errorMessage = "Selected date is null when shift is not repeating!";
+    console.error("Error creating shift", errorMessage);
     res.status(500).json({
       error: "Internal Server Error",
-      details: "Selected date is null when shift is not repeating!",
+      details: errorMessage,
     });
   } else if (newShift.selectedDays === null && repeating === true) {
-    console.error("Error creating shift", error);
+    const errorMessage = "Selected days is null when shift is repeating!";
+    console.error("Error creating shift", errorMessage);
     res.status(500).json({
       error: "Internal Server Error",
-      details: "Selected days is null when shift is repeating!",
+      details: errorMessage,
     });
   } else if (
     newShift.selectedUsers === null ||
     newShift.selectedUsers.length === 0
   ) {
-    console.error("Error creating shift", error);
+    const errorMessage = "Shift is not assigned to anyone!";
+    console.error("Error creating shift", errorMessage);
     res.status(500).json({
       error: "Internal Server Error",
-      details: "Shift is not assigned to anyone!",
+      details: errorMessage,
     });
   }
 

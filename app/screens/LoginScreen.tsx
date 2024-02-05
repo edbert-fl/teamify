@@ -19,7 +19,7 @@ import { useAppContext } from "../components/AppContext";
 import { SERVER_URL } from "../utils/ServerAddress"
 
 const LoginScreen = () => {
-  const { setCurrUser } = useAppContext();
+  const { setCurrUser, setCurrOrganization } = useAppContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,24 +34,31 @@ const LoginScreen = () => {
   const signIn = async () => {
     setLoading(true);
 
-    console.log(SERVER_URL);
-
     try {
       const response = await axios.post(`${SERVER_URL}/user/login`,{
         email: email,
         password: password,
       })
 
-      const apiResponseData = response.data.user;
+      const userData = response.data.user;
       // Sets the user to be the currently logged in user.
       setCurrUser({
-        id: apiResponseData.id,
-        username: apiResponseData.username,
-        email: apiResponseData.email,
-        salt: apiResponseData.salt,
-        organizationCode: apiResponseData.organizationCode,
-        createdAt: new Date(apiResponseData.created_at),
+        id: userData.id,
+        username: userData.username,
+        email: userData.email,
+        salt: userData.salt,
+        organizationCode: userData.organizationCode,
+        createdAt: new Date(userData.created_at),
       });
+
+      // Sets the organization to be the user's organization.
+      const organizationData = response.data.organization;
+      setCurrOrganization({
+        name: organizationData.organization_name,
+        code: organizationData.organization_code,
+        createdAt: organizationData.created_at
+      })
+
 
     } catch (error) {
       alert(`Error signing in: ${error}`);

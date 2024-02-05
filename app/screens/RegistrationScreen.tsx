@@ -41,9 +41,6 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
   const signUp = async (userCreatedOrganization: boolean) => {
     setLoading(true);
 
-    console.log("userCreatedOrganization3:", userCreatedOrganization);
-    console.log(currOrganization);
-
     try {
       let response = null;
       if (userCreatedOrganization) {

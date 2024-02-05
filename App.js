@@ -19,12 +19,10 @@ export default function App() {
 
   useEffect(() => {
     storeUserSession();
-    console.log(currUser);
   }, [currUser]);
 
   useEffect(() => {
     storeOrganizationSession();
-    console.log(currOrganization);
   }, [currOrganization]);
 
   async function storeUserSession() {
