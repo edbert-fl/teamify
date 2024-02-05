@@ -18,8 +18,12 @@ const AdminDashboardScreen = () => {
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
 
-  function navigateToManageShifts(): void {
+  const navigateToManageShifts = () => {
     navigation.navigate("ManageShifts");
+  }
+
+  const navigateToManageRoles = () => {
+    navigation.navigate("ManageRoles");
   }
 
   return (
@@ -47,7 +51,7 @@ const AdminDashboardScreen = () => {
             <Icon name="group-add" size={22} color={theme.colors.primaryText} />
           }
           title="Manage Roles"
-          onPress={() => alert("Pressed")}
+          onPress={navigateToManageRoles}
           color={theme.colors.accent}
           titleStyle={{
             borderRadius: 8,
@@ -65,7 +69,7 @@ const AdminDashboardScreen = () => {
             />
           }
           title="Manage Shifts"
-          onPress={() => navigateToManageShifts()}
+          onPress={navigateToManageShifts}
           color={theme.colors.accent}
           titleStyle={{
             borderRadius: 8,

@@ -247,7 +247,7 @@ module.exports.initializeRoutes = (app) => {
       // Retrieve all users with the same organization_code
       const userResult = await client.query(
         "SELECT * FROM users WHERE organization_code = $1",
-        [currOrganization.organizationCode]
+        [currOrganization.code]
       );
 
       const listOfUsers = userResult.rows;

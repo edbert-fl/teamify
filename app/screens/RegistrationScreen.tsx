@@ -53,7 +53,7 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
         });
 
         if (currOrganization !== null) {
-          console.log("User has been made admin of ", (currOrganization as Organization).name);
+          console.log("User has been made admin of ", (currOrganization as Organization).organizationName);
         }
       } else {
         // Post request to server to create user as a normal user.

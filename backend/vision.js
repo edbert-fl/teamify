@@ -32,6 +32,7 @@ async function analyzeImage(uint8Array) {
   if (result.body.peopleResult) {
     // Use Array.some to iterate over people and check if any person has confidence greater than 0.7
     personFound = result.body.peopleResult.values.some((person) => {
+      console.log(person.confidence)
       return person.confidence > 0.7;
     });
   }

@@ -54,11 +54,10 @@ const LoginScreen = () => {
       // Sets the organization to be the user's organization.
       const organizationData = response.data.organization;
       setCurrOrganization({
-        name: organizationData.organization_name,
-        code: organizationData.organization_code,
+        organizationName: organizationData.organization_name,
+        organizationCode: organizationData.organization_code,
         createdAt: organizationData.created_at
       })
-
 
     } catch (error) {
       alert(`Error signing in: ${error}`);

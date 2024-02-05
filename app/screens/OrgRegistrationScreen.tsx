@@ -42,8 +42,8 @@ const OrgRegistrationScreen = () => {
       const apiResponse = response.data.organization;
 
       setCurrOrganization({
-        code: apiResponse.organization_code,
-        name: apiResponse.organization_name,
+        organizationCode: apiResponse.organization_code,
+        organizationName: apiResponse.organization_name,
         createdAt: new Date(apiResponse.created_at),
       });
       

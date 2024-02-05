@@ -14,39 +14,24 @@ import { theme } from "../utils/Styles";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useAdminContext } from "../components/AdminContext";
+import axios from "axios";
+import { SERVER_URL } from "../utils/ServerAddress";
+import { useAppContext } from "../components/AppContext";
 
 const SelectEmployeesScreen = () => {
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
   const [users, setUsers] = useState<User[]>([]);
 
+  const { currOrganization } = useAppContext();
   const { selectedUsers, setSelectedUsers } = useAdminContext();
 
   const getUsersFromDatabase = async () => {
-    const mockData: User[] = [
-      {
-        id: 1,
-        username: "Alice",
-        email: "alice@gmail.com",
-        salt: "abcdefg",
-        organizationCode: "AAAAAA",
-      },
-      {
-        id: 2,
-        username: "Bob",
-        email: "bob@gmail.com",
-        salt: "hijklmnop",
-        organizationCode: "AAAAAA",
-      },
-      {
-        id: 3,
-        username: "Charlie",
-        email: "charlie@gmail.com",
-        salt: "qrstuvwxyz",
-        organizationCode: "AAAAAA",
-      },
-    ];
+    console.log(currOrganization)
+    const response = await axios.post(`${SERVER_URL}/users/get`, {
+        currOrganization: currOrganization
+      });
 
-    setUsers(mockData);
+    console.log(response)
   };
 
   const findSelectedUser = (userToCheck: User) => {

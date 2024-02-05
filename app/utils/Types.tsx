@@ -1,8 +1,8 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 export interface Organization {
-  code: string;
-  name: string;
+  organizationCode: string;
+  organizationName: string;
   createdAt?: Date;
 }
 
@@ -64,6 +64,7 @@ export type RootStackParamList = {
 export type AdminStackParamList = {
   AdminPanel: undefined,
   ManageShifts: undefined,
+  ManageRoles: undefined,
   RepeatDays: undefined,
   SelectEmployees: undefined,
   navigation: StackNavigationProp<RootStackParamList, "AuthApp">;

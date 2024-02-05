@@ -44,8 +44,8 @@ const OrgCreationScreen = () => {
       if (organizationName && generatedCode) {
         // Save organization information to be added to database after owner account is created.
         setCurrOrganization({
-          code: generatedCode,
-          name: organizationName,
+          organizationCode: generatedCode,
+          organizationName: organizationName,
         });
 
         const response = await axios.post(`${SERVER_URL}/organization/add`, {

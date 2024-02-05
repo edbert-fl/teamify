@@ -22,7 +22,6 @@ import RNDateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { useAdminContext } from "../components/AdminContext";
-import SelectEmployeesScreen from "./SelectEmployeesScreen";
 import axios from "axios";
 import { SERVER_URL } from "../utils/ServerAddress";
 import { useAppContext } from "../components/AppContext";
@@ -49,6 +48,7 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   );
   const [isRepeatingShift, setIsRepeatingShift] = useState(false);
   const [selectedShiftEnd, setSelectedShiftEnd] = useState<Date>(new Date());
+
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
 
   const handleDateChange = (event: DateTimePickerEvent, date?: Date) => {
