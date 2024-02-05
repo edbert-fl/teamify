@@ -69,18 +69,28 @@ const setupDatabase = async () => {
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS shifts (
-          shift_id SERIAL PRIMARY KEY,
-          start_time INTEGER,
-          end_time INTEGER,
-          day INTEGER,
-          active BOOLEAN
-        );
+        shift_id SERIAL PRIMARY KEY,
+        start_time TIME,
+        end_time TIME,
+        repeating_shift BOOLEAN,
+        shift_date DATE
+      );
     `);
 
     console.log("shifts table created successfully");
 
+    await client.query(` 
+      CREATE TABLE IF NOT EXISTS shift_days (
+        shift_id SERIAL,
+        day_of_week VARCHAR(10),
+        FOREIGN KEY (shift_id) REFERENCES shifts(shift_id)
+      );
+    `);
+
+    console.log("shift_days table created successfully");
+
     await client.query(`
-      CREATE TABLE IF NOT EXISTS user_shift (
+      CREATE TABLE IF NOT EXISTS assigned_shifts (
           user_id INTEGER REFERENCES users(user_id),
           shift_id INTEGER REFERENCES shifts(shift_id)
         );
@@ -102,22 +112,25 @@ const dropTables = async () => {
   try {
     // Drop tables in the reverse order of their creation to avoid foreign key constraints
     await client.query("DROP TABLE IF EXISTS users CASCADE;");
-    console.log('users table dropped successfully');
+    console.log("users table dropped successfully");
 
     await client.query("DROP TABLE IF EXISTS organization_roles CASCADE;");
-    console.log('organization_roles table dropped successfully');
+    console.log("organization_roles table dropped successfully");
 
     await client.query("DROP TABLE IF EXISTS roles CASCADE;");
-    console.log('roles table dropped successfully');
+    console.log("roles table dropped successfully");
 
     await client.query("DROP TABLE IF EXISTS organization CASCADE;");
-    console.log('organization table dropped successfully');
+    console.log("organization table dropped successfully");
 
     await client.query("DROP TABLE IF EXISTS shifts CASCADE;");
-    console.log('shifts table dropped successfully');
+    console.log("shifts table dropped successfully");
 
-    await client.query("DROP TABLE IF EXISTS user_shifts CASCADE;");
-    console.log('user_shifts table dropped successfully');
+    await client.query("DROP TABLE IF EXISTS shift_days CASCADE;");
+    console.log("shift_days table dropped successfully");
+
+    await client.query("DROP TABLE IF EXISTS assigned_shifts CASCADE;");
+    console.log("user_shifts table dropped successfully");
   } catch (error) {
     console.error("Error dropping tables", error);
     console.error("Failed SQL statement:", error.query);
@@ -159,7 +172,15 @@ const showFirst5Rows = async () => {
   const client = await pool.connect();
 
   try {
-    const tables = ["organization", "users", "roles", "organization_roles"];
+    const tables = [
+      "organization",
+      "users",
+      "roles",
+      "organization_roles",
+      "shifts",
+      "shift_days",
+      "assigned_shifts",
+    ];
     for (const table of tables) {
       const result = await client.query(`SELECT * FROM ${table} LIMIT 5;`);
       console.log(`First 5 rows of ${table}:`);
