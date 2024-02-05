@@ -27,13 +27,13 @@ import SelectEmployeesScreen from "./SelectEmployeesScreen";
 interface ManageShiftsScreenProps {}
 
 // Define the form input type
-interface ShiftsFormInput {
-  dates: string;
-  days: string;
-  startTime: string;
-  endTime: string;
+interface Shift {
+  selectedDate?: Date;
+  selectedDays?: SelectedDaysOfTheWeek;
+  startTime: Date;
+  endTime: Date;
   repeating: boolean;
-  assignedTo: string;
+  selectedUsers: User[];
 }
 
 const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
@@ -45,11 +45,6 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   );
   const [isRepeatingShift, setIsRepeatingShift] = useState(false);
   const [selectedShiftEnd, setSelectedShiftEnd] = useState<Date>(new Date());
-
-  const {
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ShiftsFormInput>();
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
 
   const handleDateChange = (event: DateTimePickerEvent, date?: Date) => {
@@ -119,10 +114,17 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
     }
   };
 
-  const onSubmit = (data: ShiftsFormInput) => {
-    console.log(selectedDate);
-    console.log(selectedShiftStart);
-    console.log(selectedShiftEnd);
+  const handleSubmit = () => {
+    const newShift: Shift = {
+      selectedDate: selectedDate,
+      selectedDays: selectedDays,
+      startTime: selectedShiftStart,
+      endTime: selectedShiftEnd,
+      repeating: isRepeatingShift,
+      selectedUsers: selectedUsers
+    }
+
+    console.log(newShift);
   };
 
   const navigateToDaysPicker = () => {
@@ -162,7 +164,6 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
           </View>
 
           {/* Dates */}
-
           {isRepeatingShift ? (
             <View style={styles.formInputContainer}>
               <Text style={styles.formLabel}>Repeats</Text>
@@ -238,7 +239,7 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
           {/* Submit Button */}
           <TouchableOpacity
             style={styles.button}
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => handleSubmit()}
           >
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
