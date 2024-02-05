@@ -49,7 +49,8 @@ const setupDatabase = async () => {
             salt VARCHAR(256),
             organization_code VARCHAR(6) REFERENCES organization(organization_code),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            role_id INTEGER REFERENCES roles(id)
+            role_id INTEGER REFERENCES roles(id),
+            rate NUMERIC(2) DEFAULT 0
           );
         `);
 

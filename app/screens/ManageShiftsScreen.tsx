@@ -6,8 +6,8 @@ import {
   SafeAreaView,
   Switch,
   TouchableOpacity,
+  Platform,
 } from "react-native";
-import { useForm } from "react-hook-form";
 import { theme } from "../utils/Styles";
 import AppHeader from "../components/AppHeader";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -18,13 +18,13 @@ import {
   SelectedDaysOfTheWeek,
   User,
 } from "../utils/Types";
-import RNDateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
 import { useAdminContext } from "../components/AdminContext";
 import axios from "axios";
 import { SERVER_URL } from "../utils/ServerAddress";
 import { useAppContext } from "../components/AppContext";
+import { ReloadInstructions } from "react-native/Libraries/NewAppScreen";
+import DateTimePicker from "../components/DateTimePicker";
+import TimePicker from "../components/TimePicker";
 
 interface ManageShiftsScreenProps {}
 
@@ -39,10 +39,8 @@ interface Shift {
 }
 
 const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
-  const { selectedDays, selectedUsers } = useAdminContext();
+  const { selectedDays, selectedUsers, selectedDate } = useAdminContext();
   const { currOrganization, currUser } = useAppContext();
-
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedShiftStart, setSelectedShiftStart] = useState<Date>(
     new Date()
   );
@@ -50,24 +48,6 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   const [selectedShiftEnd, setSelectedShiftEnd] = useState<Date>(new Date());
 
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
-
-  const handleDateChange = (event: DateTimePickerEvent, date?: Date) => {
-    if (date) {
-      setSelectedDate(date);
-    }
-  };
-
-  const handleStartTimeChange = (event: DateTimePickerEvent, date?: Date) => {
-    if (date) {
-      setSelectedShiftStart(date);
-    }
-  };
-
-  const handleEndTimeChange = (event: DateTimePickerEvent, date?: Date) => {
-    if (date) {
-      setSelectedShiftEnd(date);
-    }
-  };
 
   const generateDaysDescription = (selectedDays: SelectedDaysOfTheWeek) => {
     let selectedDaysArray: string[] = [];
@@ -127,8 +107,8 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
         startTime: selectedShiftStart,
         endTime: selectedShiftEnd,
         repeating: isRepeatingShift,
-        selectedUsers: selectedUsers
-      }
+        selectedUsers: selectedUsers,
+      };
     } else {
       newShift = {
         selectedDate: selectedDate,
@@ -136,8 +116,8 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
         startTime: selectedShiftStart,
         endTime: selectedShiftEnd,
         repeating: isRepeatingShift,
-        selectedUsers: selectedUsers
-      }
+        selectedUsers: selectedUsers,
+      };
     }
 
     const response = await axios.post(`${SERVER_URL}/shift/add`, {
@@ -200,48 +180,20 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
           ) : (
             <View style={styles.formInputContainer}>
               <Text style={styles.formLabel}>Shift Date</Text>
-              <View style={styles.dateTimePickerContainer}>
-                <RNDateTimePicker
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  mode="date"
-                  minimumDate={new Date()}
-                  display="default"
-                  themeVariant="dark"
-                  style={styles.dateTimePicker}
-                />
-              </View>
+              <DateTimePicker />
             </View>
           )}
 
           {/* Shift Start*/}
           <View style={styles.formInputContainer}>
             <Text style={styles.formLabel}>Shift Start</Text>
-            <View style={styles.dateTimePickerContainer}>
-              <RNDateTimePicker
-                value={selectedShiftStart}
-                onChange={handleStartTimeChange}
-                mode="time"
-                display="default"
-                themeVariant="dark"
-                style={styles.dateTimePicker}
-              />
-            </View>
+              <TimePicker time={selectedShiftStart} setTime={setSelectedShiftStart} />
           </View>
 
           {/* Shift End*/}
           <View style={styles.formInputContainer}>
             <Text style={styles.formLabel}>Shift End</Text>
-            <View style={styles.dateTimePickerContainer}>
-              <RNDateTimePicker
-                value={selectedShiftEnd}
-                onChange={handleEndTimeChange}
-                mode="time"
-                display="default"
-                themeVariant="dark"
-                style={styles.dateTimePicker}
-              />
-            </View>
+            <TimePicker time={selectedShiftEnd} setTime={setSelectedShiftEnd} />
           </View>
 
           {/* Assign shift to */}
@@ -311,6 +263,9 @@ const styles = StyleSheet.create({
   },
   dateTimePickerContainer: {
     width: 150,
+    flexDirection: "row",
+  },
+  dateTimePickerContainerAndroid: {
     flexDirection: "row",
   },
   dateTimePicker: {

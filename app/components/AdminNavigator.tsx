@@ -23,11 +23,14 @@ const AppNavigator = () => {
     saturday: false,
     sunday: false,
   });
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   return (
     <AdminContext.Provider
       value={{
+        selectedDate,
+        setSelectedDate,
         selectedDays,
         setSelectedDays,
         selectedUsers,
