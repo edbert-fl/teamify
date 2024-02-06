@@ -36,7 +36,7 @@ const ManageRolesScreen = () => {
   }, []);
 
   function editUser(user: User): void {
-    alert("Not yet implemented");
+    navigation.navigate("EditUser", { userToEdit: user })
   }
 
   return (

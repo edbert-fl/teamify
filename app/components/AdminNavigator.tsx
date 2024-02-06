@@ -9,6 +9,7 @@ import { AdminContext } from "./AdminContext";
 import { User } from "../utils/Types";
 import SelectEmployeesScreen from "../screens/SelectEmployeesScreen";
 import ManageRolesScreen from "../screens/ManageRolesScreen";
+import EditUserScreen from "../screens/EditUserScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,10 @@ const AppNavigator = () => {
   });
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+  const EditUserScreenFC = () => {
+    return <EditUserScreen route={useRoute()}/>
+  }
 
   return (
     <AdminContext.Provider
@@ -61,6 +66,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="SelectEmployees"
           component={SelectEmployeesScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EditUser"
+          component={EditUserScreenFC}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

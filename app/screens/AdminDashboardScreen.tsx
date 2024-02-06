@@ -3,6 +3,8 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  Platform,
+  StatusBar,
 } from "react-native";
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
@@ -33,6 +35,7 @@ const AdminDashboardScreen = () => {
         <ScrollView> 
           <WorkStatusCard/>
           <PayrollStatusCard/>
+          <View style={{ height: 100 }}/>
         </ScrollView>
       </SafeAreaView>
 
@@ -87,6 +90,7 @@ export const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: theme.colors.background,
+    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight as number) : 0,
   },
   container: {
     flex: 1,

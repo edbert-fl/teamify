@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Platform,
   Alert,
+  StatusBar,
 } from "react-native";
 import { Camera, CameraType, PermissionResponse } from "expo-camera";
 import { theme } from "../utils/Styles";
@@ -167,6 +168,7 @@ export const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: theme.colors.background,
+    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight as number) : 0
   },
   container: {
     flex: 1,

@@ -12,12 +12,10 @@ import React, { useState } from "react";
 import { theme } from "../utils/Styles";
 import axios from "axios";
 import { RouteProp,  } from "@react-navigation/native";
-import { Organization, RootStackNavigationProp, RootStackParamList, RootStackRouteProp } from "../utils/Types";
+import { Organization, RootStackNavigationProp, RootStackRouteProp } from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 
 import { SERVER_URL } from "../utils/ServerAddress";
-
-type RegistrationScreenRouteProp = RouteProp<RootStackParamList, "Registration">;
 
 interface RegistrationScreenProps {
   route: RootStackRouteProp<'Registration'>;

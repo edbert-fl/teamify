@@ -80,6 +80,7 @@ export type AdminStackParamList = {
   ManageRoles: undefined,
   RepeatDays: undefined,
   SelectEmployees: undefined,
+  EditUser: { userToEdit: User },
   navigation: StackNavigationProp<RootStackParamList, "AuthApp">;
 };
 
@@ -93,6 +94,9 @@ export type RootStackNavigationProp = StackNavigationProp<
   | "AuthApp"
   | "Registration"
 >;
+
+export type AdminStackRouteProp<RouteName extends keyof AdminStackParamList> =
+  RouteProp<AdminStackParamList, RouteName>;
 
 export type RootStackRouteProp<RouteName extends keyof RootStackParamList> =
   RouteProp<RootStackParamList, RouteName>;

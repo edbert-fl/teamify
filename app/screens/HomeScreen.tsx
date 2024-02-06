@@ -4,6 +4,8 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Platform,
+  StatusBar,
 } from "react-native";
 import React from "react";
 import { theme } from "../utils/Styles";
@@ -30,6 +32,7 @@ export const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
     backgroundColor: theme.colors.background,
+    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight as number) : 0
   },
   container: {
     flex: 1,
