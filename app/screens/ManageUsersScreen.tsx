@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../components/AppContext";
 import AppHeader from "../components/AppHeader";
@@ -18,8 +18,9 @@ import axios from "axios";
 import { SERVER_URL } from "../utils/ServerAddress";
 import { Card } from "@rneui/themed";
 
-const ManageRolesScreen = () => {
+const ManageUsersScreen = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [userToEdit, setUserToEdit] = useState<User>();
   const { currOrganization, setCurrOrganization } = useAppContext();
 
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
@@ -35,8 +36,17 @@ const ManageRolesScreen = () => {
     getUsersFromDatabase();
   }, []);
 
+  useEffect(() => {
+    if (userToEdit !== undefined) {
+      navigation.navigate("EditUser", {
+        userToEdit: userToEdit as User,
+        setUserToEdit: setUserToEdit as Dispatch<SetStateAction<User>>,
+      });
+    }
+  }, [userToEdit]);
+
   function editUser(user: User): void {
-    navigation.navigate("EditUser", { userToEdit: user })
+    setUserToEdit(user);
   }
 
   return (
@@ -65,12 +75,15 @@ const ManageRolesScreen = () => {
                   {userRoles[user.role_id] === "Admin" ? (
                     <Icon name="star" size={32} color={theme.colors.primary} />
                   ) : userRoles[user.role_id] === "User" ? (
-                    <Icon name="star-border" size={32} color={theme.colors.secondaryText} />
+                    <Icon
+                      name="star-border"
+                      size={32}
+                      color={theme.colors.secondaryText}
+                    />
                   ) : null}
                 </View>
                 <View style={styles.username}>
                   <Text style={styles.text}>{user.username}</Text>
-                  {/* <Text style={styles.secondaryText}>{user.email}</Text> */}
                   <Text style={styles.secondaryText}>${user.rate}/ hour</Text>
                 </View>
                 <View style={styles.editIcon}>
@@ -167,4 +180,4 @@ export const styles = StyleSheet.create({
   },
 });
 
-export default ManageRolesScreen;
+export default ManageUsersScreen;

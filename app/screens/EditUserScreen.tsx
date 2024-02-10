@@ -27,7 +27,7 @@ interface EditUserScreenProps {
 }
 
 const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
-  const { userToEdit } = route.params;
+  const { userToEdit, setUserToEdit } = route.params;
   const [rateFormOpen, setRateFormOpen] = useState(false);
   const [rate, setRate] = useState<number>(0);
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
@@ -79,7 +79,10 @@ const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
             <TouchableOpacity
               style={styles.editButton}
               onPress={() => {
-                /* Add your edit functionality for Role */
+                navigation.navigate("SelectRole", {
+                  userToEdit: userToEdit,
+                  setUserToEdit: setUserToEdit,
+                });
               }}
             >
               <Text style={styles.editButtonText}>Edit</Text>

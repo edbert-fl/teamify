@@ -1,5 +1,6 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Dispatch, SetStateAction } from "react";
 
 export const userRoles: UserRoles = {
   1: "Admin",
@@ -77,10 +78,11 @@ export type RootStackParamList = {
 export type AdminStackParamList = {
   AdminPanel: undefined,
   ManageShifts: undefined,
-  ManageRoles: undefined,
+  ManageUsers: undefined,
   RepeatDays: undefined,
   SelectEmployees: undefined,
-  EditUser: { userToEdit: User },
+  SelectRole: { userToEdit: User, setUserToEdit: Dispatch<SetStateAction<User>> },
+  EditUser: { userToEdit: User, setUserToEdit: Dispatch<SetStateAction<User>> },
   navigation: StackNavigationProp<RootStackParamList, "AuthApp">;
 };
 

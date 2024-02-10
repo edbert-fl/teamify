@@ -8,8 +8,9 @@ import { useRoute } from "@react-navigation/native";
 import { AdminContext } from "./AdminContext";
 import { User } from "../utils/Types";
 import SelectEmployeesScreen from "../screens/SelectEmployeesScreen";
-import ManageRolesScreen from "../screens/ManageRolesScreen";
+import ManageUsersScreen from "../screens/ManageUsersScreen";
 import EditUserScreen from "../screens/EditUserScreen";
+import SelectRoleScreen from "../screens/SelectRoleScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,10 @@ const AppNavigator = () => {
 
   const EditUserScreenFC = () => {
     return <EditUserScreen route={useRoute()}/>
+  }
+
+  const SelectRoleScreenFC = () => {
+    return <SelectRoleScreen route={useRoute()}/>
   }
 
   return (
@@ -54,8 +59,8 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="ManageRoles"
-          component={ManageRolesScreen}
+          name="ManageUsers"
+          component={ManageUsersScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -66,6 +71,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="SelectEmployees"
           component={SelectEmployeesScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SelectRole"
+          component={SelectRoleScreenFC}
           options={{ headerShown: false }}
         />
         <Stack.Screen

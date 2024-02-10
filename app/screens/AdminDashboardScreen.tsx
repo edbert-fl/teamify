@@ -25,7 +25,7 @@ const AdminDashboardScreen = () => {
   }
 
   const navigateToManageRoles = () => {
-    navigation.navigate("ManageRoles");
+    navigation.navigate("ManageUsers");
   }
 
   return (
