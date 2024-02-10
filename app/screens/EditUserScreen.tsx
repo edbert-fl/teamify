@@ -29,7 +29,7 @@ interface EditUserScreenProps {
 const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
   const { userToEdit } = route.params;
   const [rateFormOpen, setRateFormOpen] = useState(false);
-  const [rate, setRate] = useState<string>("");
+  const [rate, setRate] = useState<number>(0);
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
 
   const toggleRateFormOpen = () => {
@@ -61,7 +61,7 @@ const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
           <View style={styles.fieldContainer}>
             <View>
               <Text style={styles.label}>RATE</Text>
-              <Text style={styles.value}>${userToEdit.rate}/hr</Text>
+              <Text style={styles.value}>${rate}/hr</Text>
             </View>
             <TouchableOpacity
               style={styles.editButton}

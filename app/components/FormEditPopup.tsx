@@ -20,8 +20,8 @@ import { theme } from "../utils/Styles";
 const WINDOW_INNER_WIDTH = Dimensions.get("window").width;
 
 interface FormEditPopupProps {
-  value: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  value: number;
+  setValue: Dispatch<SetStateAction<number>>;
   valueLabel: string;
   toggleFormEdit: () => void;
 }
@@ -35,7 +35,7 @@ const FormEditPopup: React.FC<FormEditPopupProps> = ({
   const backgroundFadeAnim = useRef(new Animated.Value(0)).current;
   const formFadeAnim = useRef(new Animated.Value(0)).current;
   const formZoomAnim = useRef(new Animated.Value(0.8)).current;
-  const [tempValue, setTempValue] = useState<string>("");
+  const [tempValue, setTempValue] = useState<string>(value.toString());
   const ANIMATION_DURATION = 100;
 
   useEffect(() => {
@@ -57,6 +57,11 @@ const FormEditPopup: React.FC<FormEditPopupProps> = ({
       }),
     ]).start();
   }, []);
+
+  const saveValue = () => {
+    exitScreen();
+    setValue(Number.parseFloat(tempValue));
+  }
 
   const exitScreen = () => {
     Animated.parallel([
@@ -111,8 +116,8 @@ const FormEditPopup: React.FC<FormEditPopupProps> = ({
               <TextInput
                 value={tempValue}
                 style={styles.input}
-                placeholder={value}
-                placeholderTextColor={theme.colors.primaryText}
+                placeholder="Enter your new rate here"
+                placeholderTextColor={theme.colors.secondaryText}
                 autoCapitalize="none"
                 keyboardType="numeric"
                 onChangeText={(text) => setTempValue(text)}
@@ -127,7 +132,7 @@ const FormEditPopup: React.FC<FormEditPopupProps> = ({
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.doneButton}
-                  onPress={exitScreen}
+                  onPress={saveValue}
                 >
                   <Text style={styles.buttonText}>DONE</Text>
                 </TouchableOpacity>
@@ -181,7 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     text: theme.colors.surface,
     borderWidth: 0,
-    borderRadius: 8,
+    borderRadius: 10,
     paddingVertical: 25,
     paddingHorizontal: 0,
     width: "90%",
@@ -217,7 +222,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   input: {
-    color: theme.colors.secondaryText,
+    color: theme.colors.primaryText,
     fontSize: 16,
     backgroundColor: theme.colors.background,
     paddingVertical: 10,
