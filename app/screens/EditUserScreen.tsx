@@ -21,6 +21,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AppHeader from "../components/AppHeader";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import FormEditPopup from "../components/FormEditPopup";
+import axios from "axios";
+import { SERVER_URL } from "../utils/ServerAddress";
+import LoadingScreen from "../components/LoadingScreen";
 
 interface EditUserScreenProps {
   route: AdminStackRouteProp<"EditUser">;
@@ -30,10 +33,23 @@ const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
   const { userToEdit, setUserToEdit } = route.params;
   const [rateFormOpen, setRateFormOpen] = useState(false);
   const [rate, setRate] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
 
   const toggleRateFormOpen = () => {
     setRateFormOpen(!rateFormOpen);
+  };
+
+  const updateUser = async () => {
+    setLoading(true);
+    const response = await axios.post(`${SERVER_URL}/user/update`, {
+      username: userToEdit.username,
+      email: userToEdit.email,
+      rate: userToEdit.rate,
+      role_id: userToEdit.role_id,
+      user_id: userToEdit.user_id,
+    });
+    setLoading(false);
   };
 
   return (
@@ -61,7 +77,7 @@ const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
           <View style={styles.fieldContainer}>
             <View>
               <Text style={styles.label}>RATE</Text>
-              <Text style={styles.value}>${rate}/hr</Text>
+              <Text style={styles.value}>${userToEdit.rate}/hr</Text>
             </View>
             <TouchableOpacity
               style={styles.editButton}
@@ -93,22 +109,23 @@ const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            /* Add your edit functionality for the entire form */
+            updateUser();
           }}
         >
-          <Text style={styles.buttonText}>Edit User</Text>
+          <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
 
         {rateFormOpen ? (
           <>
             <FormEditPopup
-              value={rate}
-              setValue={setRate}
+              userToEdit={userToEdit}
+              setUserToEdit={setUserToEdit}
               valueLabel="Rate"
               toggleFormEdit={toggleRateFormOpen}
             />
           </>
         ) : null}
+        <LoadingScreen loading={loading}/>
       </SafeAreaView>
     </View>
   );

@@ -16,26 +16,27 @@ import React, {
 } from "react";
 import { Card } from "@rneui/themed";
 import { theme } from "../utils/Styles";
+import { User } from "../utils/Types";
 
 const WINDOW_INNER_WIDTH = Dimensions.get("window").width;
 
 interface FormEditPopupProps {
-  value: number;
-  setValue: Dispatch<SetStateAction<number>>;
+  userToEdit: User;
+  setUserToEdit: Dispatch<SetStateAction<User>>;
   valueLabel: string;
   toggleFormEdit: () => void;
 }
 
 const FormEditPopup: React.FC<FormEditPopupProps> = ({
-  value,
-  setValue,
+  userToEdit,
+  setUserToEdit,
   valueLabel,
   toggleFormEdit,
 }) => {
   const backgroundFadeAnim = useRef(new Animated.Value(0)).current;
   const formFadeAnim = useRef(new Animated.Value(0)).current;
   const formZoomAnim = useRef(new Animated.Value(0.8)).current;
-  const [tempValue, setTempValue] = useState<string>(value.toString());
+  const [tempValue, setTempValue] = useState<string>(userToEdit.rate.toString());
   const ANIMATION_DURATION = 100;
 
   useEffect(() => {
@@ -60,7 +61,10 @@ const FormEditPopup: React.FC<FormEditPopupProps> = ({
 
   const saveValue = () => {
     exitScreen();
-    setValue(Number.parseFloat(tempValue));
+    setUserToEdit({
+      ...userToEdit,
+      rate: Number.parseFloat(tempValue)
+    });
   }
 
   const exitScreen = () => {

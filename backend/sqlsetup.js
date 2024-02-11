@@ -175,7 +175,7 @@ const showFirst5Rows = async () => {
   const client = await pool.connect();
 
   try {
-    const result = await client.query(`SELECT user_id, username, email, organization_code, created_at, role_id FROM users LIMIT 5;`);
+    const result = await client.query(`SELECT user_id, username, email, organization_code, created_at, role_id, rate FROM users LIMIT 5;`);
     console.log(`First 5 rows of users:`);
     console.table(result.rows)
 

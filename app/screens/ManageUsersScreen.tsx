@@ -43,6 +43,7 @@ const ManageUsersScreen = () => {
         setUserToEdit: setUserToEdit as Dispatch<SetStateAction<User>>,
       });
     }
+    getUsersFromDatabase();
   }, [userToEdit]);
 
   function editUser(user: User): void {
@@ -52,7 +53,7 @@ const ManageUsersScreen = () => {
   return (
     <View style={styles.container}>
       <AppHeader
-        title="Manage Roles"
+        title="Manage Users"
         onBackIcon={
           <Icon
             name="arrow-back-ios"
@@ -74,7 +75,13 @@ const ManageUsersScreen = () => {
                 <View style={styles.userRoleContainer}>
                   {userRoles[user.role_id] === "Admin" ? (
                     <Icon name="star" size={32} color={theme.colors.primary} />
-                  ) : userRoles[user.role_id] === "User" ? (
+                  ) : userRoles[user.role_id] === "Manager" ? (
+                    <Icon
+                      name="star"
+                      size={32}
+                      color={theme.colors.secondaryText}
+                    />
+                  ): userRoles[user.role_id] === "User" ? (
                     <Icon
                       name="star-border"
                       size={32}

@@ -61,7 +61,7 @@ module.exports.initializeRoutes = (app) => {
     try {
       client = await pool.connect();
 
-      console.log(organizationCode)
+      console.log(organizationCode);
 
       const result = await client.query(
         "SELECT * FROM organization WHERE organization_code = $1 LIMIT 1",
@@ -78,7 +78,7 @@ module.exports.initializeRoutes = (app) => {
           organization: result.rows[0],
         });
       } else {
-        console.log("No organization found with the specified code")
+        console.log("No organization found with the specified code");
         res.status(404).json({
           error: "Organization Not Found",
           message: "No organization found with the specified code.",
@@ -257,7 +257,7 @@ module.exports.initializeRoutes = (app) => {
 
       const listOfUsers = userResult.rows;
 
-      console.log(listOfUsers)
+      console.log(listOfUsers);
 
       if (listOfUsers.length === 0) {
         const errorMessage = "No such organization exists!";
@@ -267,9 +267,9 @@ module.exports.initializeRoutes = (app) => {
           .json({ error: "Internal Server Error", details: errorMessage });
       } else {
         res.json({
-            users: listOfUsers,
-            message: "Users have been retrieved successfully!",
-          });
+          users: listOfUsers,
+          message: "Users have been retrieved successfully!",
+        });
       }
     } catch (error) {
       console.error("Error during login", error);
@@ -420,6 +420,39 @@ module.exports.initializeRoutes = (app) => {
       });
     } catch (error) {
       console.error("Error adding shift", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  /* 
+  Register a new user
+  */
+  app.post("/user/update", async function (req, res) {
+    const { username, email, rate, role_id, user_id } = req.body;
+
+    try {
+      client = await pool.connect();
+
+      const updateUserResult = await client.query(
+        "UPDATE users SET username = $1, email = $2, rate = $3, role_id = $4 WHERE user_id = $5 RETURNING *",
+        [username, email, rate, role_id, user_id]
+      );
+
+      const updateUserResultData = updateUserResult.rows[0];
+      console.log(updateUserResultData)
+
+      res.json({
+        user: updateUserResultData,
+        message: "User updated successfully!",
+      });
+    } catch (error) {
+      console.error("Error updating user", error);
       res
         .status(500)
         .json({ error: "Internal Server Error", details: error.message });
