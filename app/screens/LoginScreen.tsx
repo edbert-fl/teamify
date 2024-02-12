@@ -16,7 +16,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 
-import { SERVER_URL } from "../utils/ServerAddress"
+import { SERVER_URL } from "../utils/Helpers"
 
 const LoginScreen = () => {
   const { setCurrUser, setCurrOrganization } = useAppContext();

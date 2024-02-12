@@ -39,6 +39,16 @@ export interface IconInformation {
   size: number;
 }
 
+export interface ShiftData {
+  shift_id: boolean;
+  creator_id: number;
+  start_time: Date;
+  end_time: Date;
+  organization_code: string;
+  repeating_shift: boolean,
+  shift_date: Date,
+}
+
 export interface PayrollInfo {
   totalToday: number,
   totalThisWeek: number,

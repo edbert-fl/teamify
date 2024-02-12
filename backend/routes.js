@@ -445,7 +445,7 @@ module.exports.initializeRoutes = (app) => {
       );
 
       const updateUserResultData = updateUserResult.rows[0];
-      console.log(updateUserResultData)
+      console.log(updateUserResultData);
 
       res.json({
         user: updateUserResultData,
@@ -453,6 +453,43 @@ module.exports.initializeRoutes = (app) => {
       });
     } catch (error) {
       console.error("Error updating user", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  /* 
+  Get a list of all users from an organization
+  */
+  app.post("/shifts/get", async function (req, res) {
+    const { currUser } = req.body;
+
+    try {
+      client = await pool.connect();
+      console.log(currUser)
+
+      // Retrieve all users with the same organization_code
+      const shiftResults = await client.query(
+        "SELECT * " +
+          "FROM shifts S " +
+          "JOIN assigned_shifts AS A ON S.shift_id = A.shift_id " +
+          "WHERE A.user_id = $1; ",
+        [currUser.user_id]
+      );
+
+      const listOfShifts = shiftResults.rows;
+
+      res.json({
+        shifts: listOfShifts,
+        message: "Shifts have been retrieved successfully!",
+      });
+    } catch (error) {
+      console.error("Error during login", error);
       res
         .status(500)
         .json({ error: "Internal Server Error", details: error.message });

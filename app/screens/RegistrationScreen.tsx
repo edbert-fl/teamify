@@ -15,7 +15,7 @@ import { RouteProp,  } from "@react-navigation/native";
 import { Organization, RootStackNavigationProp, RootStackRouteProp } from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 
-import { SERVER_URL } from "../utils/ServerAddress";
+import { SERVER_URL } from "../utils/Helpers";
 
 interface RegistrationScreenProps {
   route: RootStackRouteProp<'Registration'>;

@@ -22,7 +22,7 @@ import AppHeader from "../components/AppHeader";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import FormEditPopup from "../components/FormEditPopup";
 import axios from "axios";
-import { SERVER_URL } from "../utils/ServerAddress";
+import { SERVER_URL } from "../utils/Helpers";
 import LoadingScreen from "../components/LoadingScreen";
 
 interface EditUserScreenProps {

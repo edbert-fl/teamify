@@ -16,7 +16,7 @@ import { RootStackParamList } from "../utils/Types";
 import axios from "axios";
 import { useAppContext } from "../components/AppContext";
 
-import { SERVER_URL } from "../utils/ServerAddress"
+import { SERVER_URL } from "../utils/Helpers"
 
 const OrgRegistrationScreen = () => {
   const { currOrganization, setCurrOrganization } = useAppContext();

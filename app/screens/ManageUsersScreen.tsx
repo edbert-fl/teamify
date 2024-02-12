@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AdminStackParamList, userRoles, User } from "../utils/Types";
 import axios from "axios";
-import { SERVER_URL } from "../utils/ServerAddress";
+import { SERVER_URL } from "../utils/Helpers";
 import { Card } from "@rneui/themed";
 
 const ManageUsersScreen = () => {

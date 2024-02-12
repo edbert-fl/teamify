@@ -16,7 +16,7 @@ import Clock from "../components/Clock";
 import axios from "axios";
 import FormData from 'form-data';
 
-import { SERVER_URL } from "../utils/ServerAddress";
+import { SERVER_URL } from "../utils/Helpers";
 import ErrorScreen from "./ErrorScreen";
 
 const ClockInScreen = () => {

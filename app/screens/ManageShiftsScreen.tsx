@@ -21,7 +21,7 @@ import {
 } from "../utils/Types";
 import { useAdminContext } from "../components/AdminContext";
 import axios from "axios";
-import { SERVER_URL } from "../utils/ServerAddress";
+import { SERVER_URL } from "../utils/Helpers";
 import { useAppContext } from "../components/AppContext";
 import DateTimePicker from "../components/DateTimePicker";
 import TimePicker from "../components/TimePicker";
