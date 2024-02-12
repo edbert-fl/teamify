@@ -40,7 +40,7 @@ export interface IconInformation {
 }
 
 export interface ShiftData {
-  shift_id: boolean;
+  shift_id: number;
   creator_id: number;
   start_time: Date;
   end_time: Date;

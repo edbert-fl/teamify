@@ -22,13 +22,20 @@ import {
 } from "../utils/Helpers";
 import { ShiftData } from "../utils/Types";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import * as Clipboard from 'expo-clipboard';
 
 const HomeScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
   const [shifts, setShifts] = useState<ShiftData[]>([]);
+
   useEffect(() => {
     getShifts();
   }, []);
+
+  const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(currUser?.organizationCode as string);
+    console.log("Give alert that code has been copied to clipboard")
+  };
 
   const getShifts = async () => {
     const response = await axios.post(`${SERVER_URL}/shifts/get`, {
@@ -62,7 +69,7 @@ const HomeScreen = () => {
           <Text style={styles.organizationCode}>
             {currUser?.organizationCode}
           </Text>
-          <TouchableOpacity style={styles.copyContainer}>
+          <TouchableOpacity style={styles.copyContainer} onPress={copyToClipboard}>
             <Icon
               name="content-copy"
               size={18}
