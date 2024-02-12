@@ -22,15 +22,15 @@ const AuthAppNavigator = () => {
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
+      Profile: {
+        name: "person-outline",
+        color: focused ? theme.colors.primary : theme.colors.placeholderText,
+        size: 36,
+      },
       ClockIn: {
         name: "access-time",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
-      },
-      Calendar: {
-        name: "calendar-today",
-        color: focused ? theme.colors.primary : theme.colors.placeholderText,
-        size: 28,
       },
       Admin: {
         name: "work",
@@ -82,15 +82,15 @@ const AuthAppNavigator = () => {
         options={{ headerShown: false }}
       />
       <Tab.Screen
+        name="Profile"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      /> 
+      <Tab.Screen
         name="ClockIn"
         component={ClockInScreen}
         options={{ headerShown: false }}
       />
-      <Tab.Screen
-        name="Calendar"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-      /> 
       <Tab.Screen
         name="Admin"
         component={AdminNavigator}
