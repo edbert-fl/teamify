@@ -91,8 +91,8 @@ export type AdminStackParamList = {
   ManageUsers: undefined,
   RepeatDays: undefined,
   SelectEmployees: undefined,
-  SelectRole: { userToEdit: User, setUserToEdit: Dispatch<SetStateAction<User>> },
-  EditUser: { userToEdit: User, setUserToEdit: Dispatch<SetStateAction<User>> },
+  SelectRole: undefined,
+  EditUser: undefined,
   navigation: StackNavigationProp<RootStackParamList, "AuthApp">;
 };
 

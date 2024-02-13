@@ -38,10 +38,7 @@ const ManageUsersScreen = () => {
 
   useEffect(() => {
     if (userToEdit !== undefined) {
-      navigation.navigate("EditUser", {
-        userToEdit: userToEdit as User,
-        setUserToEdit: setUserToEdit as Dispatch<SetStateAction<User>>,
-      });
+      navigation.navigate("EditUser");
     }
     getUsersFromDatabase();
   }, [userToEdit]);

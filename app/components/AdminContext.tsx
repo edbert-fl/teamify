@@ -8,6 +8,8 @@ interface AdminContextProps {
   setSelectedDays: Dispatch<SetStateAction<SelectedDaysOfTheWeek>>;
   selectedUsers: User[],
   setSelectedUsers: Dispatch<SetStateAction<User[]>>; 
+  userToEdit: User | null,
+  setUserToEdit: Dispatch<SetStateAction<User | null>>; 
 }
 
 export const AdminContext = createContext<AdminContextProps | undefined>({
@@ -25,6 +27,8 @@ export const AdminContext = createContext<AdminContextProps | undefined>({
   setSelectedDays: () => {},
   selectedUsers: [],
   setSelectedUsers: () => {},
+  userToEdit: null,
+  setUserToEdit: () => {},
 });
 
 export const useAdminContext = () => {

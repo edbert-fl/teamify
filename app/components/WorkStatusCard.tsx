@@ -115,9 +115,6 @@ const styles = StyleSheet.create({
     textAlign: "left",
     fontSize: 26,
   },
-  table: {
-    borderColor: "#ddd",
-  },
   tableRow: {
     flexDirection: "row",
     paddingVertical: 6,
@@ -156,9 +153,6 @@ const styles = StyleSheet.create({
   },
   warning: {
     color: theme.colors.warning,
-  },
-  error: {
-    color: theme.colors.error,
   },
   warningText: {
     color: theme.colors.secondaryText,

@@ -22,7 +22,7 @@ const WINDOW_INNER_WIDTH = Dimensions.get("window").width;
 
 interface FormEditPopupProps {
   userToEdit: User;
-  setUserToEdit: Dispatch<SetStateAction<User>>;
+  setUserToEdit: Dispatch<SetStateAction<User | null>>;
   valueLabel: string;
   toggleFormEdit: () => void;
 }

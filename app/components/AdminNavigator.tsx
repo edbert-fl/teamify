@@ -27,14 +27,7 @@ const AppNavigator = () => {
   });
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
-  const EditUserScreenFC = () => {
-    return <EditUserScreen route={useRoute()}/>
-  }
-
-  const SelectRoleScreenFC = () => {
-    return <SelectRoleScreen route={useRoute()}/>
-  }
+  const [userToEdit, setUserToEdit] = useState<User | null>(null)
 
   return (
     <AdminContext.Provider
@@ -44,7 +37,9 @@ const AppNavigator = () => {
         selectedDays,
         setSelectedDays,
         selectedUsers,
-        setSelectedUsers
+        setSelectedUsers,
+        userToEdit,
+        setUserToEdit
       }}
     >
       <Stack.Navigator initialRouteName="AdminPanel">
@@ -75,12 +70,12 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="SelectRole"
-          component={SelectRoleScreenFC}
+          component={SelectRoleScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="EditUser"
-          component={EditUserScreenFC}
+          component={EditUserScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

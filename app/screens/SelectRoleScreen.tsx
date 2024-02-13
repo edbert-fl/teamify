@@ -24,16 +24,36 @@ interface SelectRolesProps {
 
 const SelectRoleScreen: React.FC<SelectRolesProps> = ({ route }) => {
   const { currUser } = useAppContext();
-  const { userToEdit, setUserToEdit } = route.params;
+  const { userToEdit, setUserToEdit } = useAdminContext();
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
 
   const toggleRole = (roleIndex: number) => {
-    if ((currUser as User).role_id < roleIndex) {
-      setUserToEdit({ ...userToEdit, role_id: roleIndex });
-    } else {
+    try {
+      if (userToEdit) {
+        if ((currUser as User).role_id < roleIndex) {
+          setUserToEdit((prevUserToEdit) => ({
+            ...prevUserToEdit!,
+            role_id: roleIndex,
+          }));
+        } else {
+          Alert.alert(
+            "Oops!",
+            "That role has the same or higher access than you! You can't assign it to someone else."
+          );
+        }
+      } else {
+        Alert.alert(
+          "Error",
+          "There is no user to edit! Please try again later.",
+          [{ text: "OK" }]
+        );
+      }
+    } catch (error) {
+      console.error("Error occurred:", error);
       Alert.alert(
-        "Oops!",
-        "That role has the same or higher access than you! You can't assign it to someone else."
+        "Error",
+        "An error occurred while upading user details. Please try again later.",
+        [{ text: "OK" }]
       );
     }
   };
@@ -69,7 +89,7 @@ const SelectRoleScreen: React.FC<SelectRolesProps> = ({ route }) => {
                     {userRoles[Number.parseInt(roleIndex)]}
                   </Text>
                 )}
-                {userToEdit.role_id === Number.parseInt(roleIndex) ? (
+                {userToEdit?.role_id === Number.parseInt(roleIndex) ? (
                   <Icon name="check" size={26} color={theme.colors.primary} />
                 ) : (
                   <Icon name="check" size={26} color="transparent" />

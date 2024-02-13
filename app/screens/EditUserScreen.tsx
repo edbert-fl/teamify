@@ -8,6 +8,7 @@ import {
   Platform,
   StatusBar,
   Dimensions,
+  Alert,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons"; // Importing an icon library
 import { theme } from "../utils/Styles";
@@ -24,13 +25,10 @@ import FormEditPopup from "../components/FormEditPopup";
 import axios from "axios";
 import { SERVER_URL } from "../utils/Helpers";
 import LoadingScreen from "../components/LoadingScreen";
+import { useAdminContext } from "../components/AdminContext";
 
-interface EditUserScreenProps {
-  route: AdminStackRouteProp<"EditUser">;
-}
-
-const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
-  const { userToEdit, setUserToEdit } = route.params;
+const EditUserScreen = () => {
+  const { userToEdit, setUserToEdit } = useAdminContext();
   const [rateFormOpen, setRateFormOpen] = useState(false);
   const [rate, setRate] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -41,94 +39,132 @@ const EditUserScreen: React.FC<EditUserScreenProps> = ({ route }) => {
   };
 
   const updateUser = async () => {
-    setLoading(true);
-    const response = await axios.post(`${SERVER_URL}/user/update`, {
-      username: userToEdit.username,
-      email: userToEdit.email,
-      rate: userToEdit.rate,
-      role_id: userToEdit.role_id,
-      user_id: userToEdit.user_id,
-    });
+    try {
+      if (userToEdit) {
+        setLoading(true);
+        const response = await axios.post(`${SERVER_URL}/user/update`, {
+          username: userToEdit.username,
+          email: userToEdit.email,
+          rate: userToEdit.rate,
+          role_id: userToEdit.role_id,
+          user_id: userToEdit.user_id,
+        });
+      } else {
+        Alert.alert(
+          "Error",
+          "There is no user to edit! Please try again later.",
+          [{ text: "OK" }]
+        );
+      }
+    } catch (error) {
+      console.error("Error occurred:", error);
+      Alert.alert(
+        "Error",
+        "An error occurred while upading user details. Please try again later.",
+        [{ text: "OK" }]
+      );
+      setLoading(false);
+    }
     setLoading(false);
   };
 
-  return (
-    <View style={styles.container}>
-      <AppHeader
-        title={userToEdit.username}
-        onBackIcon={
-          <Icon
-            name="arrow-back-ios"
-            size={20}
-            color={theme.colors.primaryText}
-          />
-        }
-        onBackPress={() => navigation.goBack()}
-      />
-      <SafeAreaView style={styles.safeAreaView}>
-        <View style={styles.userInfoContainer}>
-          <View style={styles.fieldContainer}>
-            <View>
-              <Text style={styles.label}>EMAIL</Text>
-              <Text style={styles.value}>{userToEdit.email}</Text>
-            </View>
-          </View>
-
-          <View style={styles.fieldContainer}>
-            <View>
-              <Text style={styles.label}>RATE</Text>
-              <Text style={styles.value}>${userToEdit.rate}/hr</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={toggleRateFormOpen}
-            >
-              <Text style={styles.editButtonText}>Edit</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.fieldContainer}>
-            <View>
-              <Text style={styles.label}>ROLE</Text>
-              <Text style={styles.value}>{userRoles[userToEdit.role_id]}</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => {
-                navigation.navigate("SelectRole", {
-                  userToEdit: userToEdit,
-                  setUserToEdit: setUserToEdit,
-                });
-              }}
-            >
-              <Text style={styles.editButtonText}>Edit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            updateUser();
-          }}
-        >
-          <Text style={styles.buttonText}>Save Changes</Text>
-        </TouchableOpacity>
-
-        {rateFormOpen ? (
-          <>
-            <FormEditPopup
-              userToEdit={userToEdit}
-              setUserToEdit={setUserToEdit}
-              valueLabel="Rate"
-              toggleFormEdit={toggleRateFormOpen}
+  if (userToEdit) {
+    return (
+      <View style={styles.container}>
+        <AppHeader
+          title={userToEdit.username}
+          onBackIcon={
+            <Icon
+              name="arrow-back-ios"
+              size={20}
+              color={theme.colors.primaryText}
             />
-          </>
-        ) : null}
-        <LoadingScreen loading={loading}/>
-      </SafeAreaView>
-    </View>
-  );
+          }
+          onBackPress={() => navigation.goBack()}
+        />
+        <SafeAreaView style={styles.safeAreaView}>
+          <View style={styles.userInfoContainer}>
+            <View style={styles.fieldContainer}>
+              <View>
+                <Text style={styles.label}>EMAIL</Text>
+                <Text style={styles.value}>{userToEdit.email}</Text>
+              </View>
+            </View>
+
+            <View style={styles.fieldContainer}>
+              <View>
+                <Text style={styles.label}>RATE</Text>
+                <Text style={styles.value}>${userToEdit.rate}/hr</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={toggleRateFormOpen}
+              >
+                <Text style={styles.editButtonText}>Edit</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.fieldContainer}>
+              <View>
+                <Text style={styles.label}>ROLE</Text>
+                <Text style={styles.value}>
+                  {userRoles[userToEdit.role_id]}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => {
+                  navigation.navigate("SelectRole");
+                }}
+              >
+                <Text style={styles.editButtonText}>Edit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              updateUser();
+            }}
+          >
+            <Text style={styles.buttonText}>Save Changes</Text>
+          </TouchableOpacity>
+
+          {rateFormOpen ? (
+            <>
+              <FormEditPopup
+                userToEdit={userToEdit}
+                setUserToEdit={setUserToEdit}
+                valueLabel="Rate"
+                toggleFormEdit={toggleRateFormOpen}
+              />
+            </>
+          ) : null}
+          <LoadingScreen loading={loading} />
+        </SafeAreaView>
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <AppHeader
+          title="Error"
+          onBackIcon={
+            <Icon
+              name="arrow-back-ios"
+              size={20}
+              color={theme.colors.primaryText}
+            />
+          }
+          onBackPress={() => navigation.goBack()}
+        />
+        <SafeAreaView style={styles.safeAreaView}>
+          <Text style={styles.label}> An error has occured... </Text>
+        </SafeAreaView>
+      </View>
+    )
+  }
 };
 
 export const styles = StyleSheet.create({

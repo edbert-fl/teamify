@@ -25,6 +25,7 @@ import { SERVER_URL } from "../utils/Helpers";
 import { useAppContext } from "../components/AppContext";
 import DateTimePicker from "../components/DateTimePicker";
 import TimePicker from "../components/TimePicker";
+import LoadingScreen from "../components/LoadingScreen";
 
 interface ManageShiftsScreenProps {}
 
@@ -45,6 +46,7 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
     new Date()
   );
   const [isRepeatingShift, setIsRepeatingShift] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedShiftEnd, setSelectedShiftEnd] = useState<Date>(new Date());
 
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
@@ -99,47 +101,72 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   };
 
   const handleSubmit = async () => {
-    if (
-      isRepeatingShift &&
-      Object.values(selectedDays).every((day) => day === false)
-    ) {
+    try {
+      if (
+        isRepeatingShift &&
+        Object.values(selectedDays).every((day) => day === false)
+      ) {
+        Alert.alert(
+          "Incomplete Shift Configuration",
+          "Please make sure to specify at least one day for the shift.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      if (
+        selectedUsers.length === 0
+      ) {
+        Alert.alert(
+          "Incomplete Shift Configuration",
+          "Please make sure to assign this shift to at least one person.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      setLoading(true);
+
+      let newShift: Shift;
+      if (isRepeatingShift) {
+        newShift = {
+          selectedDate: undefined,
+          selectedDays: selectedDays,
+          startTime: selectedShiftStart,
+          endTime: selectedShiftEnd,
+          repeating: isRepeatingShift,
+          selectedUsers: selectedUsers,
+        };
+      } else {
+        newShift = {
+          selectedDate: selectedDate,
+          selectedDays: undefined,
+          startTime: selectedShiftStart,
+          endTime: selectedShiftEnd,
+          repeating: isRepeatingShift,
+          selectedUsers: selectedUsers,
+        };
+      }
+
+      const response = await axios.post(`${SERVER_URL}/shift/add`, {
+        newShift: newShift,
+        currOrganization: currOrganization,
+        currUser: currUser,
+      });
       Alert.alert(
-        "Incomplete Shift Configuration",
-        "Please make sure to specify at least one day for the shift.",
-        [
-          { text: "OK", onPress: () => console.log("OK Pressed") }
-        ]
+        "Success",
+        "Shift successfully added!",
+        [{ text: "OK" }]
       );
-      return;
+      setLoading(false);
+    } catch (error) {
+      console.error("Error occurred:", error);
+      Alert.alert(
+        "Error",
+        "An error occurred while adding the shift. Please try again later.",
+        [{ text: "OK" }]
+      );
+      setLoading(false);
     }
-
-    let newShift: Shift;
-    if (isRepeatingShift) {
-      newShift = {
-        selectedDate: undefined,
-        selectedDays: selectedDays,
-        startTime: selectedShiftStart,
-        endTime: selectedShiftEnd,
-        repeating: isRepeatingShift,
-        selectedUsers: selectedUsers,
-      };
-    } else {
-      newShift = {
-        selectedDate: selectedDate,
-        selectedDays: undefined,
-        startTime: selectedShiftStart,
-        endTime: selectedShiftEnd,
-        repeating: isRepeatingShift,
-        selectedUsers: selectedUsers,
-      };
-    }
-
-    const response = await axios.post(`${SERVER_URL}/shift/add`, {
-      newShift: newShift,
-      currOrganization: currOrganization,
-      currUser: currUser,
-    });
-    console.log(newShift);
   };
 
   const navigateToDaysPicker = () => {
@@ -234,6 +261,8 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
         </View>
+
+        <LoadingScreen loading={loading} />
       </SafeAreaView>
     </View>
   );
