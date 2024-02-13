@@ -23,6 +23,7 @@ import {
 import { ShiftData } from "../utils/Types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as Clipboard from "expo-clipboard";
+import ShiftInfoCard from "../components/ShiftInfoCard";
 
 const HomeScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
@@ -47,16 +48,6 @@ const HomeScreen = () => {
     } else {
       setShifts(response.data.shifts);
     }
-  };
-
-  const getNumberOfHours = (shiftStart: Date, shiftEnd: Date): number => {
-    // Get the difference in milliseconds between the end and start dates
-    const differenceInMilliseconds = shiftEnd.getTime() - shiftStart.getTime();
-
-    // Convert milliseconds to hours
-    const hours = differenceInMilliseconds / (1000 * 60 * 60);
-
-    return hours;
   };
 
   return (
@@ -85,58 +76,7 @@ const HomeScreen = () => {
         <View style={styles.shiftsContainer}>
           <Text style={styles.upcomingShiftsLabel}>Upcoming Shifts</Text>
           {shifts.map((shift: ShiftData) => {
-            return (
-              <View key={shift.shift_id}>
-                {shift.shift_date ? (
-                  <Card containerStyle={styles.shiftCard}>
-                    <Text style={styles.shiftCardText}>
-                      {formatDate(shift.shift_date.toString())}
-                    </Text>
-                    <Text style={styles.dayText}>
-                      {getDayFromDate(shift.shift_date.toString())}
-                    </Text>
-                    <Card.Divider
-                      width={1}
-                      style={{ marginTop: 5 }}
-                      color={theme.colors.faded}
-                    />
-                    <View style={styles.timeContainer}>
-                      <Text style={styles.shiftCardText}>
-                        {formatTimeString(shift.start_time.toString()) +
-                          " - " +
-                          formatTimeString(shift.end_time.toString())}
-                      </Text>
-                      <Text style={styles.shiftCardText}>
-                        {getNumberOfHours(
-                          convertTimeStringToDate(shift.start_time.toString()),
-                          convertTimeStringToDate(shift.end_time.toString())
-                        ) + " hrs"}
-                      </Text>
-                    </View>
-
-                    <View style={styles.wageContainer}>
-                      {currUser && (
-                        <Text style={styles.shiftCardText}>
-                          Est.{" "}
-                          <Text style={styles.wageText}>
-                            {"$" +
-                              getNumberOfHours(
-                                convertTimeStringToDate(
-                                  shift.start_time.toString()
-                                ),
-                                convertTimeStringToDate(
-                                  shift.end_time.toString()
-                                )
-                              ) *
-                                currUser.rate}
-                          </Text>
-                        </Text>
-                      )}
-                    </View>
-                  </Card>
-                ) : null}
-              </View>
-            );
+            return <ShiftInfoCard key={shift.shift_id} shift={shift} />;
           })}
         </View>
       </ScrollView>
