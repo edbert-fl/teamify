@@ -66,87 +66,15 @@ export const styles = StyleSheet.create({
     paddingBottom: 50,
     backgroundColor: theme.colors.background,
   },
-  card: {
-    backgroundColor: theme.colors.accent,
-    borderWidth: 0,
-    borderRadius: 10,
-    fontWeight: "500",
-    marginHorizontal: 0,
-    marginBottom: 10,
-    paddingHorizontal: 25,
-    paddingVertical: 25,
-  },
-  copyContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: 55,
-  },
   upcomingShiftsLabel: {
     color: theme.colors.primaryText,
     fontSize: 24,
     fontWeight: "bold",
     marginTop: 10,
   },
-  copyText: {
-    color: theme.colors.primaryText,
-    fontSize: 16,
-  },
-  timeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
   shiftsContainer: {
     borderRadius: 10,
     marginBottom: 30,
-  },
-  shiftCard: {
-    backgroundColor: theme.colors.surface,
-    text: theme.colors.surface,
-    borderWidth: 0,
-    borderRadius: 10,
-    fontWeight: "500",
-    marginHorizontal: 0,
-    paddingHorizontal: 25,
-    paddingVertical: 25,
-  },
-  dayText: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: theme.colors.primaryText,
-    marginBottom: 5,
-  },
-  wageContainer: {
-    paddingTop: 16,
-  },
-  wageText: {
-    color: theme.colors.primary,
-    fontWeight: "bold",
-  },
-  shiftCardText: {
-    fontSize: 18,
-    color: theme.colors.primaryText,
-  },
-  organizationCodeLabel: {
-    fontSize: 18,
-    color: theme.colors.primaryText,
-  },
-  organizationCode: {
-    fontSize: 66,
-    fontWeight: "bold",
-    color: theme.colors.primaryText,
-  },
-  button: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 5,
-    padding: 15,
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
 
