@@ -22,7 +22,7 @@ import {
 } from "../utils/Helpers";
 import { ShiftData } from "../utils/Types";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from "expo-clipboard";
 
 const HomeScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
@@ -34,7 +34,7 @@ const HomeScreen = () => {
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(currUser?.organizationCode as string);
-    console.log("Give alert that code has been copied to clipboard")
+    console.log("Give alert that code has been copied to clipboard");
   };
 
   const getShifts = async () => {
@@ -69,7 +69,10 @@ const HomeScreen = () => {
           <Text style={styles.organizationCode}>
             {currUser?.organizationCode}
           </Text>
-          <TouchableOpacity style={styles.copyContainer} onPress={copyToClipboard}>
+          <TouchableOpacity
+            style={styles.copyContainer}
+            onPress={copyToClipboard}
+          >
             <Icon
               name="content-copy"
               size={18}
@@ -80,9 +83,10 @@ const HomeScreen = () => {
         </Card>
 
         <View style={styles.shiftsContainer}>
+          <Text style={styles.upcomingShiftsLabel}>Upcoming Shifts</Text>
           {shifts.map((shift: ShiftData) => {
             return (
-              <>
+              <View key={shift.shift_id}>
                 {shift.shift_date ? (
                   <Card containerStyle={styles.shiftCard}>
                     <Text style={styles.shiftCardText}>
@@ -91,6 +95,11 @@ const HomeScreen = () => {
                     <Text style={styles.dayText}>
                       {getDayFromDate(shift.shift_date.toString())}
                     </Text>
+                    <Card.Divider
+                      width={1}
+                      style={{ marginTop: 5 }}
+                      color={theme.colors.faded}
+                    />
                     <View style={styles.timeContainer}>
                       <Text style={styles.shiftCardText}>
                         {formatTimeString(shift.start_time.toString()) +
@@ -126,7 +135,7 @@ const HomeScreen = () => {
                     </View>
                   </Card>
                 ) : null}
-              </>
+              </View>
             );
           })}
         </View>
@@ -162,7 +171,13 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: 55
+    width: 55,
+  },
+  upcomingShiftsLabel: {
+    color: theme.colors.primaryText,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 10,
   },
   copyText: {
     color: theme.colors.primaryText,

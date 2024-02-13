@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 
-import {Text } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {Alert, Text } from "react-native";
+import { BottomTabNavigationProp, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { theme } from "../utils/Styles";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ClockInScreen from "../screens/ClockInScreen";
 import HomeScreen from "../screens/HomeScreen";
 import AdminNavigator from "./AdminNavigator";
-import { RouteProp, ParamListBase } from "@react-navigation/native";
+import { RouteProp, ParamListBase,  } from "@react-navigation/native";
 import { IconMap } from "../utils/Types";
 import { useAppContext } from "./AppContext";
 
@@ -22,10 +22,10 @@ const AuthAppNavigator = () => {
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
-      Profile: {
-        name: "person-outline",
+      Calendar: {
+        name: "calendar-today",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
-        size: 36,
+        size: 28,
       },
       ClockIn: {
         name: "access-time",
@@ -74,7 +74,7 @@ const AuthAppNavigator = () => {
         },
         tabBarLabel: ({ focused }) => tabBarLabel(focused, route)
       })}
-      initialRouteName="ClockIn"
+      initialRouteName="Home"
     >
       <Tab.Screen
         name="Home"
@@ -82,9 +82,14 @@ const AuthAppNavigator = () => {
         options={{ headerShown: false }}
       />
       <Tab.Screen
-        name="Profile"
+        name="Calendar"
         component={HomeScreen}
         options={{ headerShown: false }}
+        listeners={{
+          tabPress: e => {
+            Alert.alert("Error!", "This feature has not yet been implemented!")
+          },
+        }}
       /> 
       <Tab.Screen
         name="ClockIn"
