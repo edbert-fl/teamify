@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  TouchableOpacity,
   Platform,
   StatusBar,
   ScrollView,
@@ -11,19 +10,13 @@ import {
 import React, { useEffect, useState } from "react";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../components/AppContext";
-import { Card } from "@rneui/themed";
 import axios from "axios";
 import {
   SERVER_URL,
-  convertTimeStringToDate,
-  formatDate,
-  formatTimeString,
-  getDayFromDate,
 } from "../utils/Helpers";
 import { ShiftData } from "../utils/Types";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import * as Clipboard from "expo-clipboard";
 import ShiftInfoCard from "../components/ShiftInfoCard";
+import OrganizationCodeCard from "../components/OrganizationCodeCard";
 
 const HomeScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
@@ -32,11 +25,6 @@ const HomeScreen = () => {
   useEffect(() => {
     getShifts();
   }, []);
-
-  const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(currUser?.organizationCode as string);
-    console.log("Give alert that code has been copied to clipboard");
-  };
 
   const getShifts = async () => {
     const response = await axios.post(`${SERVER_URL}/shifts/get`, {
@@ -53,26 +41,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <ScrollView style={styles.container}>
-        <Card containerStyle={styles.card}>
-          <Text style={styles.organizationCodeLabel}>
-            Your Organization Code
-          </Text>
-          <Text style={styles.organizationCode}>
-            {currUser?.organizationCode}
-          </Text>
-          <TouchableOpacity
-            style={styles.copyContainer}
-            onPress={copyToClipboard}
-          >
-            <Icon
-              name="content-copy"
-              size={18}
-              color={theme.colors.primaryText}
-            />
-            <Text style={styles.copyText}>Copy</Text>
-          </TouchableOpacity>
-        </Card>
-
+        <OrganizationCodeCard organizationCode={currUser?.organizationCode} />
         <View style={styles.shiftsContainer}>
           <Text style={styles.upcomingShiftsLabel}>Upcoming Shifts</Text>
           {shifts.map((shift: ShiftData) => {
