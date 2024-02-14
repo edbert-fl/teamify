@@ -27,7 +27,7 @@ const setupDatabase = async () => {
           );
         `);
 
-    console.log("organization table created successfully");
+    console.log("organization table created successfully\n");
 
     await client.query(`
         CREATE TABLE IF NOT EXISTS roles (
@@ -38,6 +38,18 @@ const setupDatabase = async () => {
       `);
 
     console.log("roles table created successfully");
+
+    const insertStatements = [
+      "INSERT INTO roles (role, role_level) VALUES ('Admin', 1);",
+      "INSERT INTO roles (role, role_level) VALUES ('Manager', 2);",
+      "INSERT INTO roles (role, role_level) VALUES ('User', 3);",
+    ];
+
+    for (const statement of insertStatements) {
+      await client.query(statement);
+    }
+
+    console.log("default roles inserted successfully\n");
 
     // Include role_id here and remove organization_roles table
     await client.query(`
@@ -54,19 +66,7 @@ const setupDatabase = async () => {
           );
         `);
 
-    console.log("users table created successfully");
-
-    const insertStatements = [
-      "INSERT INTO roles (role, role_level) VALUES ('Admin', 1);",
-      "INSERT INTO roles (role, role_level) VALUES ('Manager', 2);",
-      "INSERT INTO roles (role, role_level) VALUES ('User', 3);",
-    ];
-
-    for (const statement of insertStatements) {
-      await client.query(statement);
-    }
-
-    console.log("Default roles inserted successfully");
+    console.log("users table created successfully\n");
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS shifts (
@@ -80,7 +80,7 @@ const setupDatabase = async () => {
       );
     `);
 
-    console.log("shifts table created successfully");
+    console.log("shifts table created successfully\n");
 
     await client.query(` 
       CREATE TABLE IF NOT EXISTS shift_days (
@@ -90,16 +90,23 @@ const setupDatabase = async () => {
       );
     `);
 
-    console.log("shift_days table created successfully");
+    console.log("shift_days table created successfully\n");
 
+    // This can be made reduntant in place of 
     await client.query(`
       CREATE TABLE IF NOT EXISTS assigned_shifts (
           user_id INTEGER REFERENCES users(user_id),
-          shift_id INTEGER REFERENCES shifts(shift_id)
+          shift_id INTEGER REFERENCES shifts(shift_id),
+          clock_in_time TIME,
+          clock_out_time TIME,
+          break_start_time TIME,
+          break_end_time TIME
         );
     `);
 
-    console.log("user_shift table created successfully");
+    console.log("assigned_shifts table created successfully\n");
+
+    console.log("All tables added successfully!");
   } catch (error) {
     console.error("Error creating tables", error);
     console.error("Failed SQL statement:", error.query);
@@ -133,7 +140,7 @@ const dropTables = async () => {
     console.log("shift_days table dropped successfully");
 
     await client.query("DROP TABLE IF EXISTS assigned_shifts CASCADE;");
-    console.log("user_shifts table dropped successfully");
+    console.log("assigned_shifts table dropped successfully");
   } catch (error) {
     console.error("Error dropping tables", error);
     console.error("Failed SQL statement:", error.query);
@@ -155,7 +162,7 @@ const checkTablesExist = async () => {
       `);
 
     const existingTables = result.rows.map((row) => row.table_name);
-    const tables = ["organization", "users", "roles", "organization_roles"];
+    const tables = ["organization", "users", "roles", "organization_roles", "assigned_shifts", "shift_days", "shifts"];
 
     tables.forEach((table) => {
       if (existingTables.includes(table)) {

@@ -479,7 +479,7 @@ module.exports.initializeRoutes = (app) => {
 
     try {
       client = await pool.connect();
-      console.log(currUser)
+      console.log(currUser);
 
       // Retrieve all users with the same organization_code
       const shiftResults = await client.query(
@@ -495,6 +495,47 @@ module.exports.initializeRoutes = (app) => {
       res.json({
         shifts: listOfShifts,
         message: "Shifts have been retrieved successfully!",
+      });
+    } catch (error) {
+      console.error("Error during login", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  /* 
+  Clock in
+  */
+  app.post("/shifts/clockin", async function (req, res) {
+    const { currUser } = req.body;
+    let client;
+
+    try {
+      client = await pool.connect();
+      console.log(currUser);
+
+      // Retrieve the shift that is coming up next
+      const shiftResults = await client.query(
+        "SELECT * " +
+          "FROM shifts S " +
+          "JOIN assigned_shifts AS A ON S.shift_id = A.shift_id " +
+          "WHERE A.user_id = $1 " +
+          "AND S.shift_date = CURRENT_DATE " +
+          "ORDER BY S.shift_date ASC " +
+          "LIMIT 1; ",
+        [currUser.user_id]
+      );
+
+      const shift = shiftResults.rows[0];
+
+      res.json({
+        shifts: listOfShifts,
+        message: "Clocked in successfully!",
       });
     } catch (error) {
       console.error("Error during login", error);
