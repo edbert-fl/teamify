@@ -11,18 +11,26 @@ import {
 import React, { useState } from "react";
 import { theme } from "../utils/Styles";
 import axios from "axios";
-import { RouteProp,  } from "@react-navigation/native";
-import { Organization, RootStackNavigationProp, RootStackRouteProp } from "../utils/Types";
+import { RouteProp } from "@react-navigation/native";
+import {
+  Organization,
+  RootStackNavigationProp,
+  RootStackRouteProp,
+} from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 
 import { SERVER_URL } from "../utils/Helpers";
+import LoadingScreen from "../components/LoadingScreen";
 
 interface RegistrationScreenProps {
-  route: RootStackRouteProp<'Registration'>;
+  route: RootStackRouteProp<"Registration">;
   navigation: RootStackNavigationProp;
 }
 
-const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigation }) => {
+const RegistrationScreen: React.FC<RegistrationScreenProps> = ({
+  route,
+  navigation,
+}) => {
   const { currOrganization, setCurrUser } = useAppContext();
 
   const { userCreatedOrganization } = route.params;
@@ -51,7 +59,10 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
         });
 
         if (currOrganization !== null) {
-          console.log("User has been made admin of ", (currOrganization as Organization).organizationName);
+          console.log(
+            "User has been made admin of",
+            (currOrganization as Organization).organizationName
+          );
         }
       } else {
         // Post request to server to create user as a normal user.
@@ -71,7 +82,7 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
           username: userData.username,
           email: userData.email,
           salt: userData.salt,
-          organizationCode: userData.organizationCode,
+          organizationCode: userData.organization_code,
           role_id: userData.role_id,
           rate: userData.rate | 0,
           createdAt: new Date(userData.created_at),
@@ -121,24 +132,22 @@ const RegistrationScreen: React.FC<RegistrationScreenProps> = ({ route, navigati
           enablesReturnKeyAutomatically={true}
         />
 
-        {loading ? (
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        ) : (
-          <View style={{ marginTop: 50 }}>
-            <View style={{ flex: 1 }} />
-            <TouchableOpacity style={styles.button} onPress={() => signUp(userCreatedOrganization)}>
-              <Text style={styles.buttonText}>Create Account</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkContainer}
-              onPress={handleLogin}
-            >
-              <Text style={styles.text}>Already Have an account?</Text>
-              <Text style={styles.link}>Login instead</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={{ marginTop: 50 }}>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => signUp(userCreatedOrganization)}
+          >
+            <Text style={styles.buttonText}>Create Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.linkContainer} onPress={handleLogin}>
+            <Text style={styles.text}>Already Have an account?</Text>
+            <Text style={styles.link}>Login instead</Text>
+          </TouchableOpacity>
+        </View>
+
       </KeyboardAvoidingView>
+      <LoadingScreen loading={loading} />
     </View>
   );
 };

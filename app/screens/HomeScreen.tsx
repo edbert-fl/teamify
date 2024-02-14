@@ -6,6 +6,7 @@ import {
   Platform,
   StatusBar,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { theme } from "../utils/Styles";
@@ -20,9 +21,11 @@ import NoUpcomingShifts from "../components/NoUpcomingShifts";
 
 const HomeScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
+
   const [shifts, setShifts] = useState<ShiftData[] | null>(null);
 
   useEffect(() => {
+    console.log(currUser);
     getShifts();
   }, []);
 
@@ -50,15 +53,20 @@ const HomeScreen = () => {
                 return <ShiftInfoCard key={shift.shift_id} shift={shift} />;
               })
             ) : (
-              <NoUpcomingShifts/>
+              <NoUpcomingShifts />
             )
           ) : (
             <>
-            <ShiftCardPlaceholder />
-            <ShiftCardPlaceholder />
-            <ShiftCardPlaceholder />
+              <ShiftCardPlaceholder />
+              <ShiftCardPlaceholder />
+              <ShiftCardPlaceholder />
             </>
           )}
+          <TouchableOpacity style={styles.button} onPress={() => setCurrUser(null)}>
+            <Text style={styles.buttonText}>
+            Logout
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </ScrollView>
@@ -71,6 +79,20 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     paddingTop:
       Platform.OS === "android" ? (StatusBar.currentHeight as number) : 0,
+  },
+  button: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.accent,
+    marginTop: 30,
+    height: 50,
+    borderRadius: 10
+  },
+  buttonText: {
+    color: theme.colors.primaryText,
+    fontSize: 16,
+    fontWeight: "bold"
   },
   container: {
     flex: 1,

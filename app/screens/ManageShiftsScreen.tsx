@@ -42,9 +42,8 @@ interface Shift {
 const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
   const { selectedDays, selectedUsers, selectedDate } = useAdminContext();
   const { currOrganization, currUser } = useAppContext();
-  const [selectedShiftStart, setSelectedShiftStart] = useState<Date>(
-    new Date()
-  );
+
+  const [selectedShiftStart, setSelectedShiftStart] = useState<Date>(new Date());
   const [isRepeatingShift, setIsRepeatingShift] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedShiftEnd, setSelectedShiftEnd] = useState<Date>(new Date());
@@ -114,9 +113,7 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
         return;
       }
 
-      if (
-        selectedUsers.length === 0
-      ) {
+      if (selectedUsers.length === 0) {
         Alert.alert(
           "Incomplete Shift Configuration",
           "Please make sure to assign this shift to at least one person.",
@@ -152,11 +149,7 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
         currOrganization: currOrganization,
         currUser: currUser,
       });
-      Alert.alert(
-        "Success",
-        "Shift successfully added!",
-        [{ text: "OK" }]
-      );
+      Alert.alert("Success", "Shift successfully added!", [{ text: "OK" }]);
       setLoading(false);
     } catch (error) {
       console.error("Error occurred:", error);

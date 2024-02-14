@@ -19,7 +19,7 @@ const AppNavigator = () => {
 
   return (
     <Stack.Navigator initialRouteName="AuthApp">
-      {currUser && currOrganization ? (
+      {currUser ? (
         <Stack.Screen
           name="AuthApp"
           component={AuthAppNavigator}
