@@ -258,7 +258,7 @@ const ManageShiftsScreen: React.FC<ManageShiftsScreenProps> = () => {
             style={styles.button}
             onPress={() => handleSubmit()}
           >
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
 
@@ -297,9 +297,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: "center",
   },
-  buttonText: {
-    color: "white",
-  },
   formInputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -331,6 +328,11 @@ const styles = StyleSheet.create({
   editDaysText: {
     fontSize: 16,
     color: theme.colors.primaryText,
+  },
+  submitButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });
 

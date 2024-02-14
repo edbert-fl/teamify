@@ -16,7 +16,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { useAppContext } from "../components/AppContext";
 
-import { SERVER_URL } from "../utils/Helpers"
+import { SERVER_URL } from "../utils/Helpers";
+import LoadingScreen from "../components/LoadingScreen";
 
 const LoginScreen = () => {
   const { setCurrUser, setCurrOrganization } = useAppContext();
@@ -35,10 +36,10 @@ const LoginScreen = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${SERVER_URL}/user/login`,{
+      const response = await axios.post(`${SERVER_URL}/user/login`, {
         email: email,
         password: password,
-      })
+      });
 
       // Sets the user to be the currently logged in user.
       const userData = response.data.user;
@@ -58,9 +59,8 @@ const LoginScreen = () => {
       setCurrOrganization({
         organizationName: organizationData.organization_name,
         organizationCode: organizationData.organization_code,
-        createdAt: organizationData.created_at
-      })
-
+        createdAt: organizationData.created_at,
+      });
     } catch (error) {
       alert(`Error signing in: ${error}`);
     } finally {
@@ -95,24 +95,20 @@ const LoginScreen = () => {
           enablesReturnKeyAutomatically
         />
 
-        {loading ? (
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        ) : (
-          <View style={{ marginTop: 50 }}>
-            <TouchableOpacity style={styles.button} onPress={signIn}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <View style={{ flex: 1 }} />
-            <TouchableOpacity
-              style={styles.linkContainer}
-              onPress={handleSignUp}
-            >
-              <Text style={styles.text}>Don't have an account?</Text>
-              <Text style={styles.link}>Sign up instead</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={{ marginTop: 50 }}>
+          <TouchableOpacity style={styles.button} onPress={signIn}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity style={styles.linkContainer} onPress={handleSignUp}>
+            <Text style={styles.text}>Don't have an account?</Text>
+            <Text style={styles.link}>Sign up instead</Text>
+          </TouchableOpacity>
+        </View>
+
+        
       </KeyboardAvoidingView>
+      <LoadingScreen loading={loading} />
     </View>
   );
 };

@@ -7,14 +7,11 @@ import {
   StyleSheet,
   Platform,
   StatusBar,
-  Dimensions,
   Alert,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons"; // Importing an icon library
 import { theme } from "../utils/Styles";
 import {
   AdminStackParamList,
-  AdminStackRouteProp,
   userRoles,
 } from "../utils/Types";
 import { useNavigation } from "@react-navigation/native";
@@ -49,6 +46,11 @@ const EditUserScreen = () => {
           role_id: userToEdit.role_id,
           user_id: userToEdit.user_id,
         });
+
+        Alert.alert(
+          "Success!",
+          `${userToEdit.username} has been updated!`
+        )
       } else {
         Alert.alert(
           "Error",
@@ -63,7 +65,6 @@ const EditUserScreen = () => {
         "An error occurred while upading user details. Please try again later.",
         [{ text: "OK" }]
       );
-      setLoading(false);
     }
     setLoading(false);
   };
@@ -160,7 +161,7 @@ const EditUserScreen = () => {
           onBackPress={() => navigation.goBack()}
         />
         <SafeAreaView style={styles.safeAreaView}>
-          <Text style={styles.label}> An error has occured... </Text>
+          <Text style={styles.label}> An error has occured! there is no user to edit. </Text>
         </SafeAreaView>
       </View>
     )

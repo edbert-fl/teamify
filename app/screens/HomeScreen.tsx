@@ -11,16 +11,16 @@ import React, { useEffect, useState } from "react";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../components/AppContext";
 import axios from "axios";
-import {
-  SERVER_URL,
-} from "../utils/Helpers";
+import { SERVER_URL } from "../utils/Helpers";
 import { ShiftData } from "../utils/Types";
 import ShiftInfoCard from "../components/ShiftInfoCard";
 import OrganizationCodeCard from "../components/OrganizationCodeCard";
+import ShiftCardPlaceholder from "../components/ShiftCardPlaceholder";
+import NoUpcomingShifts from "../components/NoUpcomingShifts";
 
 const HomeScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
-  const [shifts, setShifts] = useState<ShiftData[]>([]);
+  const [shifts, setShifts] = useState<ShiftData[] | null>(null);
 
   useEffect(() => {
     getShifts();
@@ -39,17 +39,29 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeAreaView}>
-      <ScrollView style={styles.container}>
+    <ScrollView style={styles.container}>
+      <SafeAreaView style={styles.safeAreaView}>
         <OrganizationCodeCard organizationCode={currUser?.organizationCode} />
         <View style={styles.shiftsContainer}>
           <Text style={styles.upcomingShiftsLabel}>Upcoming Shifts</Text>
-          {shifts.map((shift: ShiftData) => {
-            return <ShiftInfoCard key={shift.shift_id} shift={shift} />;
-          })}
+          {shifts ? (
+            shifts.length !== 0 ? (
+              shifts.map((shift: ShiftData) => {
+                return <ShiftInfoCard key={shift.shift_id} shift={shift} />;
+              })
+            ) : (
+              <NoUpcomingShifts/>
+            )
+          ) : (
+            <>
+            <ShiftCardPlaceholder />
+            <ShiftCardPlaceholder />
+            <ShiftCardPlaceholder />
+            </>
+          )}
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 

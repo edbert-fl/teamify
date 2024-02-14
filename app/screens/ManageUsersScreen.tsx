@@ -17,11 +17,13 @@ import { AdminStackParamList, userRoles, User } from "../utils/Types";
 import axios from "axios";
 import { SERVER_URL } from "../utils/Helpers";
 import { Card } from "@rneui/themed";
+import { useAdminContext } from "../components/AdminContext";
 
 const ManageUsersScreen = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [userToEdit, setUserToEdit] = useState<User>();
   const { currOrganization, setCurrOrganization } = useAppContext();
+
+  const {userToEdit, setUserToEdit} = useAdminContext();
 
   const navigation = useNavigation<StackNavigationProp<AdminStackParamList>>();
 
@@ -37,7 +39,8 @@ const ManageUsersScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (userToEdit !== undefined) {
+    if (userToEdit) {
+      console.log(userToEdit)
       navigation.navigate("EditUser");
     }
     getUsersFromDatabase();

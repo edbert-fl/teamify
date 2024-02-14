@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import { AdminStackParamList, AdminStackRouteProp, User } from "../utils/Types";
 import { Card } from "@rneui/base";
 import Icon from "react-native-vector-icons/MaterialIcons";

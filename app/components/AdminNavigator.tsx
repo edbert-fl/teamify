@@ -29,6 +29,10 @@ const AppNavigator = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
 
+  const SelectRoleScreenFC = () => {
+    return <SelectRoleScreen route={useRoute()}/>
+  }
+
   return (
     <AdminContext.Provider
       value={{
@@ -70,7 +74,7 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="SelectRole"
-          component={SelectRoleScreen}
+          component={SelectRoleScreenFC}
           options={{ headerShown: false }}
         />
         <Stack.Screen

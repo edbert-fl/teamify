@@ -15,8 +15,6 @@ const ROLES = {
   USER: 3,
 };
 
-var client;
-
 module.exports.initializeRoutes = (app) => {
   app.get("/api", function (req, res, next) {
     res.json({ msg: "This is CORS-enabled for all origins!" });
@@ -27,6 +25,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/organization/add", async function (req, res) {
     const { code, name } = req.body;
+    let client;
 
     try {
       client = await pool.connect();
@@ -57,6 +56,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/organization/login", async function (req, res) {
     const { organizationCode } = req.body;
+    let client;
 
     try {
       client = await pool.connect();
@@ -101,6 +101,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/user/register", async function (req, res) {
     const { displayName, email, password, currOrganization } = req.body;
+    let client;
 
     try {
       client = await pool.connect();
@@ -144,6 +145,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/user/register/admin", async function (req, res) {
     const { displayName, email, password, currOrganization } = req.body;
+    let client;
 
     try {
       client = await pool.connect();
@@ -187,6 +189,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/user/login", async function (req, res) {
     const { email, password } = req.body;
+    let client;
 
     try {
       client = await pool.connect();
@@ -245,6 +248,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/users/get", async function (req, res) {
     const { currOrganization } = req.body;
+    let client;
 
     try {
       client = await pool.connect();
@@ -290,6 +294,7 @@ module.exports.initializeRoutes = (app) => {
   app.post("/verify/person", upload.single("image"), async (req, res) => {
     // Extract the file from the request
     const file = req.file;
+    let client;
 
     try {
       if (file) {
@@ -323,6 +328,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/shift/add", async function (req, res) {
     const { newShift, currOrganization, currUser } = req.body;
+    let client;
 
     // Data validation
     if (newShift.selectedDate === null && repeating === false) {
@@ -435,6 +441,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/user/update", async function (req, res) {
     const { username, email, rate, role_id, user_id } = req.body;
+    let client;
 
     try {
       client = await pool.connect();
@@ -468,6 +475,7 @@ module.exports.initializeRoutes = (app) => {
   */
   app.post("/shifts/get", async function (req, res) {
     const { currUser } = req.body;
+    let client;
 
     try {
       client = await pool.connect();

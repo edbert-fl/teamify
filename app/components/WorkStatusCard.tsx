@@ -8,19 +8,19 @@ const WorkStatusCard = () => {
   const clockInGracePeriod = 5;
   const users = [
     {
-      name: "Brynn",
-      timeClockedIn: new Date("2024-01-15T09:05:00"),
-      timeClockedOut: new Date("2024-01-15T17:00:00"),
-      late: 6,
-      overtime: 5,
-    },
-    {
       name: "Jessie",
       avatar: "https://uifaces.co/our-content/donated/bUkmHPKs.jpg",
       timeClockedIn: new Date("2024-01-15T08:30:00"),
       timeClockedOut: null,
       late: 0,
       overtime: 0,
+    },
+    {
+      name: "Brynn",
+      timeClockedIn: new Date("2024-01-15T09:05:00"),
+      timeClockedOut: new Date("2024-01-15T17:00:00"),
+      late: 6,
+      overtime: 5,
     },
     {
       name: "Victoria",

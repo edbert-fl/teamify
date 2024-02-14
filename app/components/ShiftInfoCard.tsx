@@ -25,7 +25,7 @@ const ShiftInfoCard: React.FC<ShiftInfoCardProps> = ({ shift }) => {
     return (
     <View key={shift.shift_id}>
       {shift.shift_date ? (
-        <Card containerStyle={styles.shiftCard}>
+        <Card containerStyle={styles.card}>
           <Text style={styles.shiftCardText}>
             {formatDate(shift.shift_date.toString())}
           </Text>
@@ -75,16 +75,6 @@ const ShiftInfoCard: React.FC<ShiftInfoCardProps> = ({ shift }) => {
 }
 
 export const styles = StyleSheet.create({
-    card: {
-      backgroundColor: theme.colors.accent,
-      borderWidth: 0,
-      borderRadius: 10,
-      fontWeight: "500",
-      marginHorizontal: 0,
-      marginBottom: 10,
-      paddingHorizontal: 25,
-      paddingVertical: 25,
-    },
     timeContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
@@ -93,7 +83,7 @@ export const styles = StyleSheet.create({
       borderRadius: 10,
       marginBottom: 30,
     },
-    shiftCard: {
+    card: {
       backgroundColor: theme.colors.surface,
       text: theme.colors.surface,
       borderWidth: 0,
