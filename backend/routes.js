@@ -377,7 +377,7 @@ module.exports.initializeRoutes = (app) => {
       }
 
       const shiftInputResult = await client.query(
-        "INSERT INTO shifts (organization_code, creator_id, start_time, end_time, repeating_shift, shift_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        "INSERT INTO shifts (organization_code, creator_id, start_time, end_time, repeating_shift, shift_date, shift_completed) VALUES ($1, $2, $3, $4, $5, $6, FALSE) RETURNING *",
         [
           currOrganization.organizationCode,
           currUser.user_id,
@@ -412,7 +412,7 @@ module.exports.initializeRoutes = (app) => {
       // Assign the shift to the assignees
       for (user of newShift.selectedUsers) {
         const assignShiftInput = await client.query(
-          "INSERT INTO assigned_shifts (user_id, shift_id, shift_completed) VALUES ($1, $2, FALSE) RETURNING *",
+          "INSERT INTO assigned_shifts (user_id, shift_id) VALUES ($1, $2) RETURNING *",
           [user.user_id, shiftInputResultData.shift_id]
         );
 
@@ -483,10 +483,12 @@ module.exports.initializeRoutes = (app) => {
 
       // Retrieve all users with the same organization_code
       const shiftResults = await client.query(
-        "SELECT * " +
-          "FROM shifts S " +
-          "JOIN assigned_shifts AS A ON S.shift_id = A.shift_id " +
-          "WHERE A.user_id = $1; ",
+        `SELECT * 
+          FROM shifts S 
+          JOIN assigned_shifts AS A ON S.shift_id = A.shift_id 
+          WHERE A.user_id = $1
+          AND S.shift_completed = FALSE
+          OR (S.shift_date >= CURRENT_DATE); `,
         [currUser.user_id]
       );
 
@@ -529,7 +531,6 @@ module.exports.initializeRoutes = (app) => {
         `UPDATE assigned_shifts 
         SET clock_in_time = $1
         WHERE user_id = $2
-        AND shift_completed = FALSE
         AND shift_id = (
            SELECT S.shift_id 
             FROM shifts S 
@@ -550,6 +551,219 @@ module.exports.initializeRoutes = (app) => {
       });
     } catch (error) {
       console.error("Error during clock in", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  /* 
+  Clock out
+  */
+  app.post("/shifts/clockout", async function (req, res) {
+    const { currTime, currUser } = req.body;
+    let client;
+
+    try {
+      client = await pool.connect();
+      console.log(currUser);
+
+      const clockOutTimeString = new Date(currTime)
+        .toISOString()
+        .split("T")[1]
+        .substring(0, 8);
+
+      // Retrieve the shift that is coming up next
+      const shiftClockOut = await client.query(
+        `UPDATE assigned_shifts 
+        SET clock_out_time = $1
+        WHERE user_id = $2
+        AND shift_id = (
+           SELECT S.shift_id 
+            FROM shifts S 
+            JOIN assigned_shifts AS A ON S.shift_id = A.shift_id 
+            WHERE A.user_id = $3
+            AND S.shift_date >= CURRENT_DATE 
+            ORDER BY S.shift_date ASC 
+            LIMIT 1); `,
+        [clockOutTimeString, currUser.user_id, currUser.user_id]
+      );
+
+      const shiftClockOutData = shiftClockOut.rows[0];
+
+      const shiftComplete = await client.query(
+        `UPDATE shifts AS S
+        SET shift_completed = TRUE 
+        FROM assigned_shifts AS A
+        WHERE S.shift_id = A.shift_id
+        AND A.user_id = $1
+        AND S.shift_date >= CURRENT_DATE
+        `,
+        [currUser.user_id]
+      );
+
+      const shiftCompleteData = shiftComplete.rows[0];
+
+      res.json({
+        shiftClockOutData: shiftClockOutData,
+        message: "Clocked out successfully!",
+      });
+    } catch (error) {
+      console.error("Error during clock out", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  /* 
+  Start break
+  */
+  app.post("/shifts/break/start", async function (req, res) {
+    const { currTime, currUser } = req.body;
+    let client;
+
+    try {
+      client = await pool.connect();
+      console.log(currUser);
+
+      const breakStartTimeString = new Date(currTime)
+        .toISOString()
+        .split("T")[1]
+        .substring(0, 8);
+
+      // Retrieve the shift that is coming up next
+      const shiftBreakStart = await client.query(
+        `UPDATE assigned_shifts 
+        SET break_start_time = $1
+        WHERE user_id = $2
+        AND shift_id = (
+           SELECT S.shift_id 
+            FROM shifts S 
+            JOIN assigned_shifts AS A ON S.shift_id = A.shift_id 
+            WHERE A.user_id = $3
+            AND S.shift_date >= CURRENT_DATE 
+            ORDER BY S.shift_date ASC 
+            LIMIT 1); `,
+        [breakStartTimeString, currUser.user_id, currUser.user_id]
+      );
+
+      const shiftBreakStartData = shiftBreakStart.rows[0];
+
+      res.json({
+        shiftBreakStartData: shiftBreakStartData,
+        message: "Break started successfully!",
+      });
+    } catch (error) {
+      console.error("Error when starting break", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  /* 
+  Start break
+  */
+  app.post("/shifts/break/end", async function (req, res) {
+    const { currTime, currUser } = req.body;
+    let client;
+
+    try {
+      client = await pool.connect();
+      console.log(currUser);
+
+      const breakEndTimeString = new Date(currTime)
+        .toISOString()
+        .split("T")[1]
+        .substring(0, 8);
+
+      // Retrieve the shift that is coming up next
+      const shiftBreakEnd = await client.query(
+        `UPDATE assigned_shifts 
+        SET break_end_time = $1
+        WHERE user_id = $2
+        AND shift_id = (
+           SELECT S.shift_id 
+            FROM shifts S 
+            JOIN assigned_shifts AS A ON S.shift_id = A.shift_id 
+            WHERE A.user_id = $3
+            AND S.shift_date >= CURRENT_DATE 
+            ORDER BY S.shift_date ASC 
+            LIMIT 1); `,
+        [breakEndTimeString, currUser.user_id, currUser.user_id]
+      );
+
+      const shiftBreakEndData = shiftBreakEnd.rows[0];
+
+      res.json({
+        shiftBreakEndData: shiftBreakEndData,
+        message: "Break started successfully!",
+      });
+    } catch (error) {
+      console.error("Error when ending break", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  /* 
+  Get a list of all users from an organization
+  */
+  app.post("/shifts/calculate-earnings", async function (req, res) {
+    const { shift } = req.body;
+    let client;
+
+    try {
+      client = await pool.connect();
+
+      const timeResult = await client.query(
+        `SELECT clock_in_time, clock_out_time, break_start_time, break_end_time
+          FROM shifts S 
+          JOIN assigned_shifts AS A ON S.shift_id = A.shift_id 
+          WHERE S.shift_id = $1
+          AND S.shift_completed = TRUE;`,
+        [shift.shift_id]
+      );
+
+      const timeResultData = timeResult.rows[0];
+
+      const arbitraryDate = new Date(2000, 0, 1); // Doesn't matter
+
+      const breakStartTime = new Date(`${arbitraryDate.toDateString()} ${timeResultData.break_start_time}`);
+      const breakEndTime = new Date(`${arbitraryDate.toDateString()} ${timeResultData.break_end_time}`);
+      const clockInTime = new Date(`${arbitraryDate.toDateString()} ${timeResultData.clock_in_time}`);
+      const clockOutTime = new Date(`${arbitraryDate.toDateString()} ${timeResultData.clock_out_time}`);
+      
+      const breakTime = (breakEndTime - breakStartTime) / (1000 * 60); 
+      const clockedInTime = (clockOutTime - clockInTime) / (1000 * 60);
+      
+      const totalWorkingTime = Math.max(clockedInTime - breakTime, 0);
+      const totalWorkingHours = totalWorkingTime / 60;
+      
+      res.json({
+        totalWorkingHours: totalWorkingHours,
+        message: "Shifts have been retrieved successfully!",
+      });
+    } catch (error) {
+      console.error("Error during login", error);
       res
         .status(500)
         .json({ error: "Internal Server Error", details: error.message });

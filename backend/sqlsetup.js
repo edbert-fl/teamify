@@ -76,7 +76,8 @@ const setupDatabase = async () => {
         start_time TIME,
         end_time TIME,
         repeating_shift BOOLEAN,
-        shift_date DATE
+        shift_date DATE,
+        shift_completed BOOLEAN
       );
     `);
 
@@ -100,8 +101,7 @@ const setupDatabase = async () => {
           clock_in_time TIME,
           clock_out_time TIME,
           break_start_time TIME,
-          break_end_time TIME,
-          shift_completed BOOLEAN
+          break_end_time TIME
         );
     `);
 
