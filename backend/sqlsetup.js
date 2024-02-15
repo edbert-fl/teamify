@@ -62,7 +62,7 @@ const setupDatabase = async () => {
             organization_code VARCHAR(6) REFERENCES organization(organization_code),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             role_id INTEGER REFERENCES roles(id),
-            rate NUMERIC(2) DEFAULT 0
+            rate NUMERIC(5, 2) DEFAULT 0.00
           );
         `);
 
@@ -100,7 +100,8 @@ const setupDatabase = async () => {
           clock_in_time TIME,
           clock_out_time TIME,
           break_start_time TIME,
-          break_end_time TIME
+          break_end_time TIME,
+          shift_completed BOOLEAN
         );
     `);
 

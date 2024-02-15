@@ -412,7 +412,7 @@ module.exports.initializeRoutes = (app) => {
       // Assign the shift to the assignees
       for (user of newShift.selectedUsers) {
         const assignShiftInput = await client.query(
-          "INSERT INTO assigned_shifts (user_id, shift_id) VALUES ($1, $2) RETURNING *",
+          "INSERT INTO assigned_shifts (user_id, shift_id, shift_completed) VALUES ($1, $2, FALSE) RETURNING *",
           [user.user_id, shiftInputResultData.shift_id]
         );
 
@@ -512,33 +512,44 @@ module.exports.initializeRoutes = (app) => {
   Clock in
   */
   app.post("/shifts/clockin", async function (req, res) {
-    const { currUser } = req.body;
+    const { currTime, currUser } = req.body;
     let client;
 
     try {
       client = await pool.connect();
       console.log(currUser);
 
+      const clockInTimeString = new Date(currTime)
+        .toISOString()
+        .split("T")[1]
+        .substring(0, 8);
+
       // Retrieve the shift that is coming up next
-      const shiftResults = await client.query(
-        "SELECT * " +
-          "FROM shifts S " +
-          "JOIN assigned_shifts AS A ON S.shift_id = A.shift_id " +
-          "WHERE A.user_id = $1 " +
-          "AND S.shift_date = CURRENT_DATE " +
-          "ORDER BY S.shift_date ASC " +
-          "LIMIT 1; ",
-        [currUser.user_id]
+      const shiftClockIn = await client.query(
+        `UPDATE assigned_shifts 
+        SET clock_in_time = $1
+        WHERE user_id = $2
+        AND shift_completed = FALSE
+        AND shift_id = (
+           SELECT S.shift_id 
+            FROM shifts S 
+            JOIN assigned_shifts AS A ON S.shift_id = A.shift_id 
+            WHERE A.user_id = $3
+            AND S.shift_date >= CURRENT_DATE 
+            ORDER BY S.shift_date ASC 
+            LIMIT 1); `,
+        [clockInTimeString, currUser.user_id, currUser.user_id]
       );
 
-      const shift = shiftResults.rows[0];
+      const shiftClockInData = shiftClockIn.rows[0];
+      console.log(shiftClockInData);
 
       res.json({
-        shifts: listOfShifts,
+        shiftClockInData: shiftClockInData,
         message: "Clocked in successfully!",
       });
     } catch (error) {
-      console.error("Error during login", error);
+      console.error("Error during clock in", error);
       res
         .status(500)
         .json({ error: "Internal Server Error", details: error.message });
